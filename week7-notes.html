@@ -1,0 +1,591 @@
+<article class="cs50-notes-ar" dir="rtl" lang="ar">
+<h1 class="no_toc" data-unit="0" id="lecture-7">المحاضرة 7: قواعد البيانات وSQL</h1><p class="source-credit">ترجمة عربية مستقلة لملاحظات CS50x 2026، المحاضرة 7، لديفيد ج. مالان وفريق CS50 بجامعة هارفارد. التغييرات: ترجمة الشرح والتنقل، أوصاف عربية للأشكال، تصحيحات وتوضيحات تحريرية موسومة. الشيفرة الأصلية محفوظة كما وردت. ليست نسخة رسمية أو معتمدة. <a href="https://cs50.harvard.edu/x/2026/notes/7/" rel="noopener noreferrer" target="_blank">المصدر الأصلي</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0، للاستخدام غير التجاري وبالمشاركة بالمثل</a> · </p>
+<ul id="markdown-toc">
+<li><a href="#/notes/7/?section=welcome" id="markdown-toc-welcome">مرحبًا!</a></li>
+<li><a href="#/notes/7/?section=flat-file-database" id="markdown-toc-flat-file-database">قاعدة بيانات في ملف مسطح</a></li>
+<li><a href="#/notes/7/?section=relational-databases" id="markdown-toc-relational-databases">قواعد البيانات العلائقية</a></li>
+<li><a href="#/notes/7/?section=select" id="markdown-toc-select">القراءة باستخدام SELECT</a></li>
+<li><a href="#/notes/7/?section=insert" id="markdown-toc-insert">الإضافة باستخدام INSERT</a></li>
+<li><a href="#/notes/7/?section=delete" id="markdown-toc-delete">الحذف باستخدام DELETE</a></li>
+<li><a href="#/notes/7/?section=update" id="markdown-toc-update">التحديث باستخدام UPDATE</a></li>
+<li><a href="#/notes/7/?section=imdb" id="markdown-toc-imdb">بيانات IMDb</a></li>
+<li><a href="#/notes/7/?section=joins" id="markdown-toc-joins">الربط باستخدام JOIN</a></li>
+<li><a href="#/notes/7/?section=indexes" id="markdown-toc-indexes">الفهارس</a></li>
+<li><a href="#/notes/7/?section=using-sql-in-python" id="markdown-toc-using-sql-in-python">استخدام SQL في Python</a></li>
+<li><a href="#/notes/7/?section=race-conditions" id="markdown-toc-race-conditions">حالات التسابق</a></li>
+<li><a href="#/notes/7/?section=sql-injection-attacks" id="markdown-toc-sql-injection-attacks">حقن SQL</a></li>
+<li><a href="#/notes/7/?section=summing-up" id="markdown-toc-summing-up">خلاصة</a></li>
+</ul>
+<h2 data-unit="1" id="welcome">مرحبًا!</h2>
+<ul>
+<li data-marker="*" data-unit="2">تعرفنا في الأسبوع السابق على Python باستخدام اللبنات التي تعلمناها في C. الهدف ليس إضافة لغة فقط، بل معرفة أن لكل مهمة أدوات تناسبها أكثر من غيرها.</li>
+<li data-marker="*" data-unit="3">نكمل هذا الأسبوع بعض صيغ Python.</li>
+<li data-marker="*" data-unit="4">ونربط هذه المعرفة بالتعامل مع البيانات.</li>
+<li data-marker="*" data-unit="5">ثم نتعلم SQL، أي لغة الاستعلامات المهيكلة، وهي لغة متخصصة لقراءة البيانات وتعديلها.</li>
+<li data-marker="*" data-unit="6">من أهداف المقرر تعلّم البرمجة عمومًا، لا حفظ لغات محددة فقط.</li>
+</ul>
+<h2 data-unit="7" id="flat-file-database">قاعدة بيانات في ملف مسطح</h2>
+<ul>
+<li data-marker="*" data-unit="8">يمكن تمثيل كثير من البيانات بصفوف وأعمدة.</li>
+<li data-marker="*" data-unit="9">يمكن تصدير جداول Excel وGoogle Sheets إلى ملفات <code class="inline-source" dir="ltr">CSV</code>، أي قيم مفصولة بفواصل.</li>
+<li data-marker="*" data-unit="10">يخزن ملف <code class="inline-source" dir="ltr">CSV</code> هنا جدولًا واحدًا في ملف نصي؛ نسمي هذا نموذج قاعدة بيانات في ملف مسطح.</li>
+<li data-marker="*" data-unit="11">تُخزن السجلات صفًا صفًا، وتفصل الفواصل أو المحددات الأخرى بين الحقول.</li>
+<li data-marker="*" data-unit="12">توفر Python وحدة للتعامل مع <code class="inline-source" dir="ltr">CSV</code>.</li>
+<li data-marker="*" data-unit="13">نزّل <code class="inline-source" dir="ltr">favorites.csv</code> من المصدر، وارفعه إلى مستكشف الملفات في cs50.dev. يحدد الصف الأول أسماء الأعمدة، وتأتي السجلات بعده صفًا صفًا. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites.csv?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a> <a href="https://cs50.dev" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*">
+<p data-unit="14">اكتب <code class="inline-source" dir="ltr">code favorites.py</code> في الطرفية، ثم:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints all favorites in CSV using csv.reader
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create reader
+    reader = csv.reader(file)
+
+    # Skip header row
+    next(reader)
+
+    # Iterate over CSV file, printing each favorite
+    for row in reader:
+        print(row[1])
+</code></pre></div> </div>
+<p data-unit="15">نستورد <code class="inline-source" dir="ltr">csv</code> وننشئ <code class="inline-source" dir="ltr">reader</code> باستخدام <code class="inline-source" dir="ltr">csv.reader(file)</code>. يعطينا القارئ صفًا في كل مرة، وتطبع <code class="inline-source" dir="ltr">print(row[1])</code> اللغة من العمود الثاني في هذا الملف. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="16">يمكن تحسين الشيفرة:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Stores favorite in a variable
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create reader
+    reader = csv.reader(file)
+
+    # Skip header row
+    next(reader)
+
+    # Iterate over CSV file, printing each favorite
+    for row in reader:
+        favorite = row[1]
+        print(favorite)
+</code></pre></div> </div>
+<p data-unit="17">نخزن القيمة في <code class="inline-source" dir="ltr">favorite</code> ثم نطبعها. ونستخدم <code class="inline-source" dir="ltr">next</code> لتجاوز صف العناوين. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="18">لكننا نفترض أن العمود الثاني هو اللغة المفضلة دائمًا. ماذا لو تغير ترتيب الأعمدة؟</li>
+<li data-marker="*">
+<p data-unit="19">يمكن حل ذلك بقراءة الصفوف كقواميس والوصول إلى الحقول بأسمائها. [تصحيح تحريري: المفاتيح هنا مفاتيح dict، لا فهارس قائمة list.]</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints all favorites in CSV using csv.DictReader
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Iterate over CSV file, printing each favorite
+    for row in reader:
+        favorite = row["language"]
+        print(favorite)
+</code></pre></div> </div>
+<p data-unit="20">نستخدم المفتاح <code class="inline-source" dir="ltr">language</code> مباشرة، فنسند <code class="inline-source" dir="ltr">row["language"]</code> إلى <code class="inline-source" dir="ltr">favorite</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="21">ويمكن التبسيط أكثر:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints all favorites in CSV using csv.DictReader
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Iterate over CSV file, printing each favorite
+    for row in reader:
+        print(row["language"])
+</code></pre></div> </div>
+<p data-unit="22">رابط تنزيل المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="23">لعد اللغات المفضلة في الملف:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Counts favorites using variables
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Counts
+    scratch, c, python = 0, 0, 0
+
+    # Iterate over CSV file, counting favorites
+    for row in reader:
+        favorite = row["language"]
+        if favorite == "Scratch":
+            scratch += 1
+        elif favorite == "C":
+            c += 1
+        elif favorite == "Python":
+            python += 1
+
+# Print counts
+print(f"Scratch: {scratch}")
+print(f"C: {c}")
+print(f"Python: {python}")
+</code></pre></div> </div>
+<p data-unit="24">نزيد عداد كل لغة باستخدام <code class="inline-source" dir="ltr">if</code> ونقارن بالقيم باستخدام <code class="inline-source" dir="ltr">==</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites4.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="25">ويمكن استخدام قاموس للعدادات:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Counts favorites using dictionary
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Counts
+    counts = {}
+
+    # Iterate over CSV file, counting favorites
+    for row in reader:
+        favorite = row["language"]
+        if favorite in counts:
+            counts[favorite] += 1
+        else:
+            counts[favorite] = 1
+
+# Print counts
+for favorite in counts:
+    print(f"{favorite}: {counts[favorite]}")
+</code></pre></div> </div>
+<p data-unit="26">إذا كان المفتاح <code class="inline-source" dir="ltr">favorite</code> موجودًا في <code class="inline-source" dir="ltr">counts</code> نزيد قيمته، وإلا ننشئه بالقيمة 1. ثم نطبع <code class="inline-source" dir="ltr">counts[favorite]</code> ضمن سلسلة منسقة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites5.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="27">ويمكن التعامل مع غياب المفتاح باستخدام <code class="inline-source" dir="ltr">try</code> و<code class="inline-source" dir="ltr">except</code>:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Uses try/except instead
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Counts
+    counts = {}
+
+    # Iterate over CSV file, counting favorites
+    for row in reader:
+        favorite = row["language"]
+        try:
+            counts[favorite] += 1
+        except KeyError:
+            counts[favorite] = 1
+
+# Print counts
+for favorite in counts:
+    print(f"{favorite}: {counts[favorite]}")
+</code></pre></div> </div>
+<p data-unit="28">استُبدلت <code class="inline-source" dir="ltr">if</code> و<code class="inline-source" dir="ltr">else</code> بمحاولة العملية والتقاط الاستثناء المناسب. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites6.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="29">يمكن أيضًا ترتيب النتائج:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Sorts favorites by key
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Counts
+    counts = {}
+
+    # Iterate over CSV file, counting favorites
+    for row in reader:
+        favorite = row["language"]
+        if favorite in counts:
+            counts[favorite] += 1
+        else:
+            counts[favorite] = 1
+
+# Print counts
+for favorite in sorted(counts):
+    print(f"{favorite}: {counts[favorite]}")
+</code></pre></div> </div>
+<p data-unit="30">لاحظ <code class="inline-source" dir="ltr">sorted(counts)</code> في آخر المثال. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites7.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="31">يتيح توثيق <code class="inline-source" dir="ltr">sorted</code> معاملات نستخدمها هكذا:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Sorts favorites by value using .get
+
+import csv
+
+# Open CSV file
+with open("favorites.csv", "r") as file:
+
+    # Create DictReader
+    reader = csv.DictReader(file)
+
+    # Counts
+    counts = {}
+
+    # Iterate over CSV file, counting favorites
+    for row in reader:
+        favorite = row["language"]
+        if favorite in counts:
+            counts[favorite] += 1
+        else:
+            counts[favorite] = 1
+
+# Print counts
+for favorite in sorted(counts, key=counts.get, reverse=True):
+    print(f"{favorite}: {counts[favorite]}")
+</code></pre></div> </div>
+<p data-unit="32">يحدد <code class="inline-source" dir="ltr">key</code> كيف نحسب قيمة الترتيب؛ هنا تستخدم <code class="inline-source" dir="ltr">counts.get</code> قيم العدادات. ويجعل <code class="inline-source" dir="ltr">reverse=True</code> الترتيب تنازليًا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites8.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="33">راجع توثيق <code class="inline-source" dir="ltr">sorted</code> المرتبط. <a href="https://docs.python.org/3/howto/sorting.html" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a> <a href="https://docs.python.org/3/howto/sorting.html" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="34" id="relational-databases">قواعد البيانات العلائقية</h2>
+<ul>
+<li data-marker="*" data-unit="35">قواعد البيانات العلائقية أداة شائعة لتخزين البيانات على نطاق واسع؛ يذكر المصدر خدمات تقنية كبيرة أمثلةً على ذلك.</li>
+<li data-marker="*" data-unit="36">تخزن القاعدة العلائقية البيانات في جداول ذات صفوف وأعمدة.</li>
+<li data-marker="*">
+<p data-unit="37">يمكن تنظيم عمليات التعامل مع البيانات في أربع فئات:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  Create 
+  Read
+  Update
+  Delete
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="38">تسمّى هذه الفئات CRUD: إنشاء وقراءة وتحديث وحذف.</li>
+<li data-marker="*" data-unit="39">الصيغة <code class="inline-source" dir="ltr">CREATE TABLE table (column type, ...);</code> تنشئ جدولًا داخل قاعدة بيانات. أين ننفذها؟</li>
+<li data-marker="*" data-unit="40">نستخدم SQLite، وهو محرك قواعد بيانات يدعم SQL، وأداة سطر الأوامر <code class="inline-source" dir="ltr">sqlite3</code>.</li>
+<li data-marker="*" data-unit="41">اكتب <code class="inline-source" dir="ltr">sqlite3 favorites.db</code> لفتح القاعدة أو إنشاء ملفها. إذا سألت بيئة المقرر عن إنشائه، وافق باستخدام <code class="inline-source" dir="ltr">y</code>.</li>
+<li data-marker="*" data-unit="42">سترى محثًا مختلفًا لأننا داخل <code class="inline-source" dir="ltr">sqlite3</code> الآن.</li>
+<li data-marker="*" data-unit="43">فعّل نمط <code class="inline-source" dir="ltr">CSV</code> باستخدام <code class="inline-source" dir="ltr">.mode csv</code>، ثم استورد الملف باستخدام <code class="inline-source" dir="ltr">.import favorites.csv favorites</code>. قد لا تظهر رسالة رغم نجاح الأمر.</li>
+<li data-marker="*" data-unit="44">استخدم <code class="inline-source" dir="ltr">.schema</code> لعرض تعريف الجداول.</li>
+<li data-marker="*" data-unit="45">نقرأ أعمدة باستخدام <code class="inline-source" dir="ltr">SELECT columns FROM table</code>.</li>
+<li data-marker="*" data-unit="46">يعرض <code class="inline-source" dir="ltr">SELECT * FROM favorites;</code> كل صفوف الجدول.</li>
+<li data-marker="*" data-unit="47">ويعرض <code class="inline-source" dir="ltr">SELECT language FROM favorites;</code> عمود اللغة فقط.</li>
+<li data-marker="*">
+<p data-unit="48">توفر SQL عمليات ودوال منها:</p>
+<pre dir="ltr"><code class="language-SQL" dir="ltr">  AVG
+  COUNT
+  DISTINCT
+  LOWER
+  MAX
+  MIN
+  UPPER
+</code></pre>
+</li>
+<li data-marker="*" data-unit="49">تعطي <code class="inline-source" dir="ltr">SELECT COUNT(*) FROM favorites;</code> عدد الصفوف، و<code class="inline-source" dir="ltr">SELECT DISTINCT language FROM favorites;</code> اللغات دون تكرار. وتعد <code class="inline-source" dir="ltr">SELECT COUNT(DISTINCT language) FROM favorites;</code> القيم المميزة غير <code class="inline-source" dir="ltr">NULL</code> في العمود.</li>
+<li data-marker="*">
+<p data-unit="50">ويمكن إضافة عبارات إلى الاستعلامات، منها:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  WHERE       -- adding a Boolean expression to filter our data
+  LIKE        -- filtering responses more loosely
+  ORDER BY    -- ordering responses
+  LIMIT       -- limiting the number of responses
+  GROUP BY    -- grouping responses together
+</code></pre></div> </div>
+<p data-unit="51">تبدأ تعليقات SQL هنا بالرمزين <code class="inline-source" dir="ltr">--</code>.</p>
+</li>
+</ul>
+<h2 data-unit="52" id="select">القراءة باستخدام SELECT</h2>
+<ul>
+<li data-marker="*" data-unit="53">تعطي <code class="inline-source" dir="ltr">SELECT COUNT(*) FROM favorites WHERE language = 'C';</code> عدد الصفوف المطابقة للغة C.</li>
+<li data-marker="*" data-unit="54">وتضيف <code class="inline-source" dir="ltr">SELECT COUNT(*) FROM favorites WHERE language = 'C' AND problem = 'Hello, World';</code> شرط المسألة أيضًا. تجمع <code class="inline-source" dir="ltr">AND</code> الشرطين.</li>
+<li data-marker="*" data-unit="55">تعطي <code class="inline-source" dir="ltr">SELECT language, COUNT(*) FROM favorites GROUP BY language;</code> نتيجة مجمعة تعرض كل لغة وعددها.</li>
+<li data-marker="*" data-unit="56">ترتب <code class="inline-source" dir="ltr">SELECT language, COUNT(*) FROM favorites GROUP BY language ORDER BY COUNT(*);</code> النتيجة حسب العدد تصاعديًا.</li>
+<li data-marker="*" data-unit="57">تستخدم <code class="inline-source" dir="ltr">SELECT COUNT(*) FROM favorites WHERE language = 'C' AND (problem = 'Hello, World' OR problem = 'Hello, It''s Me');</code> أقواسًا لتجميع البدائل. تُمثل علامتا اقتباس متتاليتان اقتباسًا واحدًا داخل النص الحرفي في SQL.</li>
+<li data-marker="*" data-unit="58">تبحث <code class="inline-source" dir="ltr">SELECT COUNT(*) FROM favorites WHERE language = 'C' AND problem LIKE 'Hello, %';</code> عن أسماء مسائل تبدأ بالنص <code class="inline-source" dir="ltr">Hello, </code>متبوعًا بمسافة. تمثل <code class="inline-source" dir="ltr">%</code> سلسلة محارف، وقد تكون فارغة.</li>
+<li data-marker="*" data-unit="59">وللترتيب التنازلي: <code class="inline-source" dir="ltr">SELECT language, COUNT(*) FROM favorites GROUP BY language ORDER BY COUNT(*) DESC;</code>.</li>
+<li data-marker="*" data-unit="60">يمكن تسمية عمود النتيجة باسم مستعار: <code class="inline-source" dir="ltr">SELECT language, COUNT(*) AS n FROM favorites GROUP BY language ORDER BY n DESC;</code>.</li>
+<li data-marker="*" data-unit="61">ونحدد عدد صفوف الناتج: <code class="inline-source" dir="ltr">SELECT language, COUNT(*) AS n FROM favorites GROUP BY language ORDER BY n DESC LIMIT 1;</code>.</li>
+<li data-marker="*" data-unit="62">من الأعراف كتابة كلمات SQL المفتاحية بأحرف كبيرة، وإن لم تكن هذه الصيغة إلزامية هنا.</li>
+</ul>
+<h2 data-unit="63" id="insert">الإضافة باستخدام INSERT</h2>
+<ul>
+<li data-marker="*" data-unit="64">نضيف صفًا باستخدام <code class="inline-source" dir="ltr">INSERT INTO table (column...) VALUES(value, ...);</code>.</li>
+<li data-marker="*" data-unit="65">مثلًا: <code class="inline-source" dir="ltr">INSERT INTO favorites (language, problem) VALUES ('SQL', 'Fiftyville');</code>.</li>
+<li data-marker="*" data-unit="66">ثم نتحقق باستخدام <code class="inline-source" dir="ltr">SELECT * FROM favorites;</code>.</li>
+</ul>
+<h2 data-unit="67" id="delete">الحذف باستخدام DELETE</h2>
+<ul>
+<li data-marker="*" data-unit="68">يحذف <code class="inline-source" dir="ltr">DELETE FROM favorites WHERE Timestamp IS NULL;</code> الصفوف التي لا تحتوي قيمة في <code class="inline-source" dir="ltr">Timestamp</code>. افحص الشرط قبل الحذف؛ هذه عملية تغيير فعلية عند تنفيذها على قاعدة.</li>
+</ul>
+<h2 data-unit="69" id="update">التحديث باستخدام UPDATE</h2>
+<ul>
+<li data-marker="*" data-unit="70">تعدّل <code class="inline-source" dir="ltr">UPDATE</code> بيانات الصفوف.</li>
+<li data-marker="*" data-unit="71">مثلًا: <code class="inline-source" dir="ltr">UPDATE favorites SET language = 'SQL', problem = 'Fiftyville';</code>. لعدم وجود WHERE ستتغير كل الصفوف.</li>
+<li data-marker="*" data-unit="72">لهذه الأوامر أثر كبير. في الأنظمة الفعلية نضبط الصلاحيات ونحتفظ بنسخ احتياطية، ونراجع نطاق أي تعديل قبل تنفيذه.</li>
+</ul>
+<h2 data-unit="73" id="imdb">بيانات IMDb</h2><aside class="editorial-note">توضيح تقني: فئات التخزين في SQLite هي <code class="inline-source" dir="ltr">NULL</code> و<code class="inline-source" dir="ltr">INTEGER</code> و<code class="inline-source" dir="ltr">REAL</code> و<code class="inline-source" dir="ltr">TEXT</code> و<code class="inline-source" dir="ltr">BLOB</code>. تختلف هذه الفئات عن مفهوم إسناد النوع للأعمدة؛ SQLite ذات نظام أنواع ديناميكي، وتوجد كذلك جداول STRICT. <a href="https://www.sqlite.org/datatype3.html" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*" data-unit="74">لو خزّنا المسلسلات في جدول بأعمدة <code class="inline-source" dir="ltr">title</code> و<code class="inline-source" dir="ltr">star</code> متكررة، فسنحتاج عددًا غير ثابت من أعمدة الممثلين: لبعض المسلسلات ممثل واحد ولغيرها عشرات.</li>
+<li data-marker="*" data-unit="75">يمكن فصل <code class="inline-source" dir="ltr">shows</code> و<code class="inline-source" dir="ltr">people</code>، ومنح كل مسلسل وشخص معرفًا فريدًا، ثم ربطهما بجدول <code class="inline-source" dir="ltr">stars</code> يحتوي <code class="inline-source" dir="ltr">show_id</code> و<code class="inline-source" dir="ltr">person_id</code>. هذا يمهد لتمثيل علائقي بدل أعمدة متكررة.</li>
+<li data-marker="*">
+<p data-unit="76">توفر مجموعة IMDb بيانات الأشخاص والأعمال والكتّاب والممثلين والتصنيفات والتقييمات. يوضح الرسم علاقاتها:</p>
+<p><img alt="علاقات الجداول: people وshows يرتبطان عبر stars وwriters، وshows يرتبط بالتصنيفات والتقييمات." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/7/cs50Week7Slide025.png" width="960"/></p><p class="diagram-description">وصف الشكل: علاقات الجداول: <code class="inline-source" dir="ltr">people</code> و<code class="inline-source" dir="ltr">shows</code> يرتبطان عبر <code class="inline-source" dir="ltr">stars</code> وwriters، و<code class="inline-source" dir="ltr">shows</code> يرتبط بالتصنيفات والتقييمات.</p>
+</li>
+<li data-marker="*" data-unit="77">بعد تنزيل <code class="inline-source" dir="ltr">shows.db</code>، افتحه باستخدام <code class="inline-source" dir="ltr">sqlite3 shows.db</code>. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/imdb/shows.db?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*">
+<p data-unit="78">لنركز على الجدولين <code class="inline-source" dir="ltr">shows</code> و<code class="inline-source" dir="ltr">ratings</code>:</p>
+<p><img alt="يربط show_id في ratings بالمفتاح id في shows." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/7/cs50Week7Slide032.png" width="960"/></p><p class="diagram-description">وصف الشكل: يربط <code class="inline-source" dir="ltr">show_id</code> في <code class="inline-source" dir="ltr">ratings</code> بالمفتاح <code class="inline-source" dir="ltr">id</code> في <code class="inline-source" dir="ltr">shows</code>.</p>
+</li>
+<li data-marker="*" data-unit="79">نفذ <code class="inline-source" dir="ltr">SELECT * FROM ratings LIMIT 10;</code>، ثم <code class="inline-source" dir="ltr">SELECT * FROM shows LIMIT 10;</code> لمقارنة العينات.</li>
+<li data-marker="*" data-unit="80">يمثل هذا المخطط العلاقة بين العمل وسجل تقييمه بعلاقة واحد إلى واحد.</li>
+<li data-marker="*" data-unit="81">تعرض <code class="inline-source" dir="ltr">.schema</code> الجداول وحقولها.</li>
+<li data-marker="*" data-unit="82">وتعرض <code class="inline-source" dir="ltr">.schema shows</code> أو <code class="inline-source" dir="ltr">.schema ratings</code> تعريف الجدول المحدد.</li>
+<li data-marker="*" data-unit="83">المفتاح الأساسي يميز سجلًا داخل جدوله. ويشير المفتاح الخارجي إلى مفتاح في جدول آخر لبناء علاقة. مثلًا يشير <code class="inline-source" dir="ltr">show_id</code> في <code class="inline-source" dir="ltr">ratings</code> إلى <code class="inline-source" dir="ltr">id</code> في <code class="inline-source" dir="ltr">shows</code>. [توضيح: ليس معرف العمل حقلًا في كل جدول بلا استثناء؛ <code class="inline-source" dir="ltr">people</code> له معرفاته المستقلة.]</li>
+<li data-marker="*" data-unit="84">يساعد فصل الكيانات وربطها على تقليل التكرار وتنظيم البيانات.</li>
+<li data-marker="*">
+<p data-unit="85">تتعامل SQLite مع خمس فئات لقيم التخزين:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  BLOB       -- binary large objects that are groups of ones and zeros
+  INTEGER    -- an integer
+  NUMERIC    -- for numbers that are formatted specially like dates
+  REAL       -- like a float
+  TEXT       -- for strings and the like
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="86">ويمكن تحديد قيود على الأعمدة، منها:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  NOT NULL
+  UNIQUE
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="87">نفذ <code class="inline-source" dir="ltr">SELECT * FROM ratings;</code> لرؤية بيانات التقييمات.</li>
+<li data-marker="*" data-unit="88">ولعرض عشرة معرفات تحقق الشرط: <code class="inline-source" dir="ltr">SELECT show_id FROM ratings WHERE rating &gt;= 6.0 LIMIT 10;</code>. لكن المعرف وحده لا يخبرنا باسم العمل.</li>
+<li data-marker="*" data-unit="89">يمكن فحص عمل معين باستخدام <code class="inline-source" dir="ltr">SELECT * FROM shows WHERE id = 626124;</code>.</li>
+<li data-marker="*">
+<p data-unit="90">ونجمع الخطوتين في استعلام متداخل:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title
+FROM shows
+WHERE id IN (
+    SELECT show_id
+    FROM ratings
+    WHERE rating &gt;= 6.0
+    LIMIT 10
+);
+</code></pre></div> </div>
+<p data-unit="91">تستخدم العبارة الخارجية نتيجة الاستعلام الداخلي.</p>
+</li>
+</ul>
+<h2 data-unit="92" id="joins">الربط باستخدام JOIN</h2>
+<ul>
+<li data-marker="*" data-unit="93">نريد بيانات من <code class="inline-source" dir="ltr">shows</code> و<code class="inline-source" dir="ltr">ratings</code>، والعلاقة بين <code class="inline-source" dir="ltr">id</code> في الأول و<code class="inline-source" dir="ltr">show_id</code> في الثاني.</li>
+<li data-marker="*" data-unit="94">يمكن جمع أعمدة الجداول في نتيجة استعلام باستخدام <code class="inline-source" dir="ltr">JOIN</code>.</li>
+<li data-marker="*">
+<p data-unit="95">نفذ المثال التالي:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT * FROM shows
+  JOIN ratings ON shows.id = ratings.show_id
+  WHERE rating &gt;= 6.0
+  LIMIT 10;
+</code></pre></div> </div>
+<p data-unit="96">يعرض الناتج أعمدة من الجدولين معًا.</p>
+</li>
+<li data-marker="*">
+<p data-unit="97">بعد علاقة الواحد إلى واحد، ننظر إلى الواحد إلى متعدد باستخدام <code class="inline-source" dir="ltr">genres</code>:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT * FROM genres
+LIMIT 10;
+</code></pre></div> </div>
+<p data-unit="98">قد يظهر العمل نفسه مع عدة تصنيفات، وهي علاقة واحد إلى متعدد.</p>
+</li>
+<li data-marker="*" data-unit="99">افحص <code class="inline-source" dir="ltr">.schema genres</code> لمعرفة بنية الجدول.</li>
+<li data-marker="*">
+<p data-unit="100">ولمعرفة الأعمال الكوميدية:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title FROM shows
+WHERE id IN (
+  SELECT show_id FROM genres
+  WHERE genre = 'Comedy'
+  LIMIT 10
+);
+</code></pre></div> </div>
+<p data-unit="101">تظهر عناوين منها Catweazle.</p>
+</li>
+<li data-marker="*">
+<p data-unit="102">يمكن معرفة مزيد عنه بربط الجداول:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT * FROM shows
+JOIN genres
+ON shows.id = genres.show_id
+WHERE id = 63881;
+</code></pre></div> </div>
+<p data-unit="103">هذه نتيجة استعلام مؤقتة، لا إنشاء جدول مخزن جديد تلقائيًا. ويظهر Catweazle مع عدة تصنيفات مثل المغامرة والكوميديا والعائلة.</p>
+</li>
+<li data-marker="*" data-unit="104">وتوجد علاقات متعدد إلى متعدد: قد يشارك أشخاص كثيرون في أعمال كثيرة.</li>
+<li data-marker="*">
+<p data-unit="105">لإيجاد ممثلي The Office:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT name FROM people WHERE id IN 
+    (SELECT person_id FROM stars WHERE show_id = 
+        (SELECT id FROM shows WHERE title = 'The Office' AND year = 2005));
+</code></pre></div> </div>
+<p data-unit="106">تعيد الاستعلامات المتداخلة أسماء الممثلين.</p>
+</li>
+<li data-marker="*">
+<p data-unit="107">ولإيجاد أعمال Steve Carell:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title FROM shows WHERE id IN 
+    (SELECT show_id FROM stars WHERE person_id = 
+        (SELECT id FROM people WHERE name = 'Steve Carell'));
+</code></pre></div> </div>
+<p data-unit="108">تعرض النتيجة عناوين الأعمال التي شارك فيها.</p>
+</li>
+<li data-marker="*">
+<p data-unit="109">ويمكن التعبير عن ذلك باستخدام <code class="inline-source" dir="ltr">JOIN</code>:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title FROM shows
+JOIN stars ON shows.id = stars.show_id
+JOIN people ON stars.person_id = people.id
+WHERE name = 'Steve Carell';
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="110">أو بهذه الصيغة أيضًا:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title FROM shows, stars, people 
+WHERE shows.id = stars.show_id
+AND people.id = stars.person_id
+AND name = 'Steve Carell';
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="111">تستخدم <code class="inline-source" dir="ltr">SELECT * FROM people WHERE name LIKE 'Steve C%';</code> الرمز <code class="inline-source" dir="ltr">%</code> لمطابقة الأسماء التي تبدأ بـ <code class="inline-source" dir="ltr">Steve C</code>.</li>
+</ul>
+<h2 data-unit="112" id="indexes">الفهارس</h2>
+<ul>
+<li data-marker="*" data-unit="113">يمكن للفهرس تحسين أداء بعض الاستعلامات على الجداول، بحسب البيانات وخطة التنفيذ.</li>
+<li data-marker="*" data-unit="114">تساعد الفهارس على تجنب فحص صفوف كثيرة في الحالات المناسبة.</li>
+<li data-marker="*" data-unit="115">فعّل قياس الزمن باستخدام <code class="inline-source" dir="ltr">.timer on</code> داخل <code class="inline-source" dir="ltr">sqlite3</code>.</li>
+<li data-marker="*" data-unit="116">نفذ <code class="inline-source" dir="ltr">SELECT * FROM shows WHERE title = 'The Office';</code> ولاحظ الزمن.</li>
+<li data-marker="*" data-unit="117">ثم أنشئ الفهرس باستخدام <code class="inline-source" dir="ltr">CREATE INDEX title_index ON shows (title);</code>.</li>
+<li data-marker="*">
+<p data-unit="118">تستخدم SQLite بنية B-tree للفهرسة؛ يمكن لعقدتها أن تتفرع إلى أكثر من طفلين، بخلاف الشجرة الثنائية.</p>
+<p><img alt="شجرة متعددة الفروع، توضح أن العقدة في B-tree يمكن أن يكون لها أكثر من طفلين." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/7/cs50Week7Slide039.png" width="960"/></p><p class="diagram-description">وصف الشكل: شجرة متعددة الفروع، توضح أن العقدة في B-tree يمكن أن يكون لها أكثر من طفلين.</p>
+</li>
+<li data-marker="*">
+<p data-unit="119">ويمكن إنشاء فهارس أخرى كما يأتي:</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">CREATE INDEX name_index ON people (name);
+CREATE INDEX person_index ON stars (person_id);
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="120">أعد تشغيل الاستعلام وقارن الزمن. لا تضمن هذه المقارنة فرقًا ثابتًا؛ قد تؤثر الذاكرة المخبأة وحجم البيانات.</p>
+<div class="language-sql highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">SELECT title FROM shows WHERE id IN 
+    (SELECT show_id FROM stars WHERE person_id = 
+        (SELECT id FROM people WHERE name = 'Steve Carell'));
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="121">الفهارس تستهلك مساحة وتضيف كلفة إلى عمليات الكتابة، لذلك نوازن فائدتها ولا نفهرس كل عمود تلقائيًا.</li>
+</ul>
+<h2 data-unit="122" id="using-sql-in-python">استخدام SQL في Python</h2><aside class="editorial-note">توضيح تقني: نمرر مدخلات البيانات كوسائط منفصلة إلى <code class="inline-source" dir="ltr">db.execute</code>، ولا نبني نص الاستعلام بضمها أو إدراجها عبر f-string. أما أسماء الجداول والأعمدة فلا تعامل كقيم قابلة للربط بالطريقة نفسها؛ نختارها من خيارات موثوقة محددة. <a href="https://cs50.readthedocs.io/libraries/cs50/python/" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*">
+<p data-unit="123">يمكن استخدام مكتبة CS50 للتعامل مع SQL:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">from cs50 import SQL
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="124">تختصر المكتبة بعض خطوات تنفيذ SQL من Python.</li>
+<li data-marker="*" data-unit="125">راجع توثيق SQL في مكتبة CS50 المرتبط. <a href="https://cs50.readthedocs.io/libraries/cs50/python/#cs50.SQL" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*" data-unit="126">لنستخدم Python وSQL معًا.</li>
+<li data-marker="*">
+<p data-unit="127">عدّل <code class="inline-source" dir="ltr">favorites.py</code>:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Searches database for popularity of a problem
+
+from cs50 import SQL
+
+# Open database
+db = SQL("sqlite:///favorites.db")
+
+# Prompt user for favorite
+favorite = input("Favorite: ")
+
+# Search for title
+rows = db.execute("SELECT COUNT(*) AS n FROM favorites WHERE problem = ?", favorite)
+
+# Get first (and only) row
+row = rows[0]
+
+# Print popularity
+print(row["n"])
+</code></pre></div> </div>
+<p data-unit="128">تحدد <code class="inline-source" dir="ltr">db = SQL("sqlite:///favorites.db")</code> ملف القاعدة، وتنفذ <code class="inline-source" dir="ltr">db.execute</code> الاستعلام مع القيم الممررة. تعيد قراءة <code class="inline-source" dir="ltr">SELECT</code> قائمة قواميس؛ في هذا المثال تعيد صف نتيجة واحدًا داخل القائمة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/7/src7/favorites/favorites10.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="129" id="race-conditions">حالات التسابق</h2><aside class="editorial-note">توضيح تقني: تدير SQLite الكتابة والقفل ضمن نموذجها للعزل. راجع توثيق المعاملات والعزل عند بناء عمليات متزامنة، وقد يلزم التعامل مع انشغال القاعدة أو إعادة المحاولة. <a href="https://www.sqlite.org/isolation.html" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*" data-unit="130">قد تظهر مشكلات عند استخدام قاعدة البيانات بصورة متزامنة.</li>
+<li data-marker="*" data-unit="131">تخيّل عدة مستخدمين ينفذون عمليات على القاعدة في الوقت نفسه.</li>
+<li data-marker="*" data-unit="132">قد تتداخل خطوات القراءة والتعديل، فتضيع بعض التحديثات إذا لم يُصمم التزامن بصورة صحيحة.</li>
+<li data-marker="*" data-unit="133">تساعد المعاملات <code class="inline-source" dir="ltr">BEGIN TRANSACTION</code> و<code class="inline-source" dir="ltr">COMMIT</code> و<code class="inline-source" dir="ltr">ROLLBACK</code> على تجميع العمليات وإدارتها. [توضيح: تفادي التسابق يعتمد أيضًا على مستوى العزل والقفل وطريقة كتابة العمليات، لا على إضافة هذه الكلمات وحدها.]</li>
+</ul>
+<h2 data-unit="134" id="sql-injection-attacks">حقن SQL</h2><aside class="editorial-note">تنبيه أمني تحريري: مثال المقارنة بكلمة المرور في SQL محفوظ كما ورد للتوضيح فقط، وليس تصميم مصادقة جاهزًا. الأنظمة الحقيقية تخزن مشتقات آمنة لكلمات المرور لا نصها الصريح، وتتحقق منها بأدوات مصادقة مناسبة.</aside>
+<ul>
+<li data-marker="*" data-unit="135">تربط علامات <code class="inline-source" dir="ltr">?</code> قيم المدخلات بالاستعلام كمعاملات. من أخطار بناء استعلام بدمج النصوص أن يحاول مدخل خارجي تغيير بنية SQL نفسها؛ يسمى ذلك حقن SQL.</li>
+<li data-marker="*">
+<p data-unit="136">تأمل نموذج تسجيل الدخول:</p>
+<p><p class="rights-hold">لقطة نموذج تسجيل الدخول في GitHub محجوبة مؤقتًا لحين حسم حقوق الطرف الثالث. وصف بديل: حقل اسم مستخدم وحقل كلمة مرور وزر دخول. أمثلة SQL أدناه تعليمية وليست نموذج دخول فعليًا في هذا الموقع.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="137">المثال التالي يوضح استخدام المعاملات لحماية بنية الاستعلام:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">rows = db.execute("SELECT COUNT(*) FROM users WHERE username = ? AND password = ?", username, password)
+</code></pre></div> </div>
+<p data-unit="138">تفصل <code class="inline-source" dir="ltr">?</code> بين نص SQL والقيم المرتبطة به. [تصحيح تحريري: ليست آلية تحقق من صحة اسم المستخدم أو كلمة المرور؛ التحقق من الهوية وصحة المدخلات مسؤوليتان منفصلتان.]</p>
+</li>
+<li data-marker="*" data-unit="139">لا نتعامل مع مدخلات المستخدم بوصفها تعليمات موثوقة.</li>
+<li data-marker="*" data-unit="140">تُمرر القيم منفصلة إلى <code class="inline-source" dir="ltr">db.execute</code> بدل دمجها في نص SQL. [تصحيح تحريري: لا تعتمد الحماية على حذف المحارف التي تبدو ضارة؛ ربط المعاملات يحافظ على تفسيرها كبيانات.]</li>
+</ul>
+<h2 data-unit="141" id="summing-up">خلاصة</h2>
+<p data-unit="142">تعلمت مزيدًا من Python وربطها بالبيانات، من ملفات <code class="inline-source" dir="ltr">CSV</code> إلى قواعد البيانات العلائقية وSQL. تناولنا:</p>
+<ul>
+<li data-marker="*" data-unit="143">قواعد بيانات الملفات المسطحة.</li>
+<li data-marker="*" data-unit="144">قواعد البيانات العلائقية.</li>
+<li data-marker="*" data-unit="145">أوامر <code class="inline-source" dir="ltr">SELECT</code> و<code class="inline-source" dir="ltr">CREATE</code> و<code class="inline-source" dir="ltr">INSERT</code> و<code class="inline-source" dir="ltr">DELETE</code> و<code class="inline-source" dir="ltr">UPDATE</code>.</li>
+<li data-marker="*" data-unit="146">المفاتيح الأساسية والخارجية.</li>
+<li data-marker="*" data-unit="147">الربط باستخدام <code class="inline-source" dir="ltr">JOIN</code>.</li>
+<li data-marker="*" data-unit="148">الفهارس.</li>
+<li data-marker="*" data-unit="149">استخدام SQL في Python.</li>
+<li data-marker="*" data-unit="150">حالات التسابق.</li>
+<li data-marker="*" data-unit="151">حقن SQL.</li>
+</ul>
+<p data-unit="152">إلى اللقاء في الدرس القادم!</p>
+</article>
