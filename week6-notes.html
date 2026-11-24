@@ -1,0 +1,1127 @@
+<article class="cs50-notes-ar" dir="rtl" lang="ar">
+<h1 class="no_toc" data-unit="0" id="lecture-6">المحاضرة 6: بايثون</h1><p class="source-credit">ترجمة عربية مستقلة لملاحظات CS50x 2026، المحاضرة 6، لديفيد ج. مالان وفريق CS50 بجامعة هارفارد. التغييرات: ترجمة الشرح والتنقل، أوصاف عربية للأشكال، تصحيحات وتوضيحات تحريرية موسومة. الشيفرة الأصلية محفوظة كما وردت. ليست نسخة رسمية أو معتمدة. <a href="https://cs50.harvard.edu/x/2026/notes/6/" rel="noopener noreferrer" target="_blank">المصدر الأصلي</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0، للاستخدام غير التجاري وبالمشاركة بالمثل</a> · </p>
+<ul id="markdown-toc">
+<li><a href="#/notes/6/?section=welcome" id="markdown-toc-welcome">مرحبًا!</a></li>
+<li><a href="#/notes/6/?section=hello-python" id="markdown-toc-hello-python">مرحبًا ببايثون!</a></li>
+<li><a href="#/notes/6/?section=speller" id="markdown-toc-speller">المدقق الإملائي</a></li>
+<li><a href="#/notes/6/?section=filter" id="markdown-toc-filter">مرشحات الصور</a></li>
+<li><a href="#/notes/6/?section=functions" id="markdown-toc-functions">الدوال</a></li>
+<li><a href="#/notes/6/?section=libraries-modules-and-packages" id="markdown-toc-libraries-modules-and-packages">المكتبات والوحدات والحزم</a></li>
+<li><a href="#/notes/6/?section=strings" id="markdown-toc-strings">السلاسل النصية</a></li>
+<li><a href="#/notes/6/?section=positional-parameters-and-named-parameters" id="markdown-toc-positional-parameters-and-named-parameters">الوسائط الموضعية والمسمّاة</a></li>
+<li><a href="#/notes/6/?section=variables" id="markdown-toc-variables">المتغيرات</a></li>
+<li><a href="#/notes/6/?section=types" id="markdown-toc-types">الأنواع</a></li>
+<li><a href="#/notes/6/?section=calculator" id="markdown-toc-calculator">آلة حاسبة</a></li>
+<li><a href="#/notes/6/?section=conditionals" id="markdown-toc-conditionals">الشروط</a></li>
+<li><a href="#/notes/6/?section=object-oriented-programming" id="markdown-toc-object-oriented-programming">البرمجة كائنية التوجه</a></li>
+<li><a href="#/notes/6/?section=loops" id="markdown-toc-loops">الحلقات</a></li>
+<li><a href="#/notes/6/?section=abstraction" id="markdown-toc-abstraction">التجريد</a></li>
+<li><a href="#/notes/6/?section=truncation-and-floating-point-imprecision" id="markdown-toc-truncation-and-floating-point-imprecision">القسمة ودقة الفاصلة العائمة</a></li>
+<li><a href="#/notes/6/?section=exceptions" id="markdown-toc-exceptions">الاستثناءات</a></li>
+<li><a href="#/notes/6/?section=mario" id="markdown-toc-mario">ماريو</a></li>
+<li><a href="#/notes/6/?section=lists" id="markdown-toc-lists">القوائم</a></li>
+<li><a href="#/notes/6/?section=searching-and-dictionaries" id="markdown-toc-searching-and-dictionaries">البحث والقواميس</a></li>
+<li><a href="#/notes/6/?section=command-line-arguments" id="markdown-toc-command-line-arguments">وسائط سطر الأوامر</a></li>
+<li><a href="#/notes/6/?section=exit-status" id="markdown-toc-exit-status">حالة الخروج</a></li>
+<li><a href="#/notes/6/?section=csv-files" id="markdown-toc-csv-files">ملفات CSV</a></li>
+<li><a href="#/notes/6/?section=third-party-libraries" id="markdown-toc-third-party-libraries">مكتبات الطرف الثالث</a></li>
+<li><a href="#/notes/6/?section=summing-up" id="markdown-toc-summing-up">خلاصة</a></li>
+</ul>
+<h2 data-unit="1" id="welcome">مرحبًا!</h2>
+<ul>
+<li data-marker="*" data-unit="2">تعرفت في الأسابيع السابقة على اللبنات الأساسية للبرمجة.</li>
+<li data-marker="*" data-unit="3">وبرمجت بلغة C، وهي أقرب إلى تفاصيل الآلة مقارنة باللغة التي نبدأها اليوم.</li>
+<li data-marker="*" data-unit="4">اليوم نستخدم لغة أعلى مستوى هي Python.</li>
+<li data-marker="*" data-unit="5">سترى أن فهمك للأساسيات يساعدك على تعلّم لغات جديدة بنفسك.</li>
+</ul>
+<h2 data-unit="6" id="hello-python">مرحبًا ببايثون!</h2><aside class="editorial-note">توضيح تقني: يترجم <code class="inline-source" dir="ltr">CPython</code> الشيفرة داخليًا إلى <code class="inline-source" dir="ltr">bytecode</code>، ثم ينفذها؛ لا تتطلب طريقة التشغيل هنا خطوة بناء يدوية منفصلة. <a href="https://docs.python.org/3/glossary.html" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*" data-unit="7">على مدى العقود طوّر البشر لغات تعالج بعض صعوبات التصميم في اللغات السابقة.</li>
+<li data-marker="*" data-unit="8">تبني Python على المفاهيم التي تعلمتها في C.</li>
+<li data-marker="*" data-unit="9">وتتيح مكتبات كثيرة أنشأها مجتمع المستخدمين.</li>
+<li data-marker="*" data-unit="10">لن تحتاج في سير العمل هنا إلى خطوة ترجمة منفصلة كما في C؛ تشغّل البرنامج بمفسّر Python. [توضيح تحريري: التنفيذ الشائع <code class="inline-source" dir="ltr">CPython</code> يترجم المصدر داخليًا إلى شيفرة بايتية قبل تنفيذها؛ الفرق هنا في طريقة الاستخدام، لا فصل مطلق بين لغات مترجمة وأخرى مفسرة.]</li>
+<li data-marker="*">
+<p data-unit="11">حتى الآن كنا نكتب مثل هذه الشيفرة:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// A program that says hello to the world
+
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    printf("hello, world\n");
+}
+</code></pre></div> </div>
+<p data-unit="12">برنامج C أكثر تفصيلًا من النسخة الآتية ببايثون. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/hello0.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="13">ستلاحظ أن كتابة البرامج وتشغيلها أصبحت أبسط.</li>
+<li data-marker="*">
+<p data-unit="14">مثلًا نكتب المثال السابق ببايثون هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># A program that says hello to the world
+
+print("hello, world")
+</code></pre></div> </div>
+<p data-unit="15">لا فاصلة منقوطة ولا حاجة إلى استيراد مكتبة للطباعة. شغّله بكتابة <code class="inline-source" dir="ltr">python hello.py</code> في الطرفية. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/hello0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="16">يمكن تنفيذ بعض ما كان معقدًا في C ببساطة أكبر في Python.</li>
+<li data-marker="*" data-unit="17">من أهداف الأسبوع الاعتياد على عدم معرفة الحل أو الصيغة فورًا، والبحث عن مصادر تساعدك ضمن سياسة الأمانة الأكاديمية للمقرر.</li>
+</ul>
+<h2 data-unit="18" id="speller">المدقق الإملائي</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="19">لرؤية هذه البساطة، اكتب <code class="inline-source" dir="ltr">code dictionary.py</code> في الطرفية ثم:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Words in dictionary
+words = set()
+
+
+def check(word):
+    """Return true if word is in dictionary else false"""
+    return word.lower() in words
+
+
+def load(dictionary):
+    """Load dictionary into memory, returning true if successful else false"""
+    with open(dictionary) as file:
+        words.update(file.read().splitlines())
+    return True
+
+
+def size():
+    """Returns number of words in dictionary if loaded else 0 if not yet loaded"""
+    return len(words)
+
+
+def unload():
+    """Unloads dictionary from memory, returning true if successful else false"""
+    return True
+</code></pre></div> </div>
+<p data-unit="20">لدينا أربع دوال. تفحص <code class="inline-source" dir="ltr">check</code> وجود الكلمة في <code class="inline-source" dir="ltr">words</code> وتعيد <code class="inline-source" dir="ltr">True</code> عند وجودها. تفتح <code class="inline-source" dir="ltr">load</code> ملف القاموس وتضيف كل سطر إلى <code class="inline-source" dir="ltr">words</code> بعد إزالة المحارف البيضاء النهائية باستخدام <code class="inline-source" dir="ltr">rstrip</code>. تعيد <code class="inline-source" dir="ltr">size</code> عدد الكلمات باستخدام <code class="inline-source" dir="ltr">len</code>، ولا تحتاج <code class="inline-source" dir="ltr">unload</code> هنا إلا إلى إرجاع <code class="inline-source" dir="ltr">True</code> لأن Python تدير الذاكرة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/6/speller/dictionary.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="21">يوضح المثال فائدة اللغات الأعلى مستوى: تقليل التفاصيل التي نكتبها بأنفسنا.</li>
+<li data-marker="*" data-unit="22">لكن الأداء أحد أوجه المفاضلة. قد يكون تنفيذ C أسرع بحسب البرنامج والمكتبات، بينما تتولى بيئة Python أعمالًا إضافية خلف العمليات عالية المستوى. [توضيح: ليست كل شيفرة Python أبطأ دائمًا؛ بعض مكتباتها تنفذ العمل الداخلي بشيفرة أصلية محسنة.]</li>
+<li data-marker="*" data-unit="23">يمكن التوسع في توثيق دوال Python المرتبط. <a href="https://docs.python.org/3/library/functions.html" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="24" id="filter">مرشحات الصور</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="25">أنشئ ملفًا بكتابة <code class="inline-source" dir="ltr">code blur.py</code> في الطرفية ثم:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Blurs an image
+
+from PIL import Image, ImageFilter
+
+# Blur image
+before = Image.open("bridge.bmp")
+after = before.filter(ImageFilter.BoxBlur(1))
+after.save("out.bmp")
+</code></pre></div> </div>
+<p data-unit="26">يستورد المثال <code class="inline-source" dir="ltr">Image</code> و<code class="inline-source" dir="ltr">ImageFilter</code> من <code class="inline-source" dir="ltr">PIL</code>، ويفتح ملف إدخال ثم ينشئ ملف إخراج. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/6/filter/blur.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="27">وأنشئ <code class="inline-source" dir="ltr">edges.py</code> هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Blurs an image
+
+from PIL import Image, ImageFilter
+
+# Find edges
+before = Image.open("bridge.bmp")
+after = before.filter(ImageFilter.FIND_EDGES)
+after.save("out.bmp")
+</code></pre></div> </div>
+<p data-unit="28">تعديل صغير على مثال التمويه ينتج تأثير كشف الحواف. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/6/filter/edges.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="29">تتيح Python إخفاء تفاصيل تنفيذ كانت ستحتاج شيفرة أكثر في C.</li>
+<li data-marker="*" data-unit="30">قد تؤثر كلفة التفسير والعمليات الديناميكية في الأداء، لكن مقدارها يعتمد على المهمة والتنفيذ والمكتبات. لا نفترض أن الفرق صغير دائمًا أو أن التفسير هو العامل الوحيد.</li>
+</ul>
+<h2 data-unit="31" id="functions">الدوال</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="32">رأينا في C استدعاء مثل:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">printf("hello, world\n");
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="33">وفي Python نكتبه هكذا:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">print("hello, world")
+</code></pre></div> </div>
+</li>
+</ul>
+<h2 data-unit="34" id="libraries-modules-and-packages">المكتبات والوحدات والحزم</h2>
+<ul>
+<li data-marker="*" data-unit="35">يمكن استخدام مكتبة CS50 في Python أيضًا.</li>
+<li data-marker="*">
+<p data-unit="36">ستفيدك الدوال الآتية خصوصًا:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  get_float
+  get_int
+  get_string
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="37">يمكن استيراد المكتبة هكذا:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">import cs50
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="38">أو استيراد دوال محددة فقط:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">from cs50 import get_float, get_int, get_string
+</code></pre></div> </div>
+</li>
+</ul>
+<h2 data-unit="39" id="strings">السلاسل النصية</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="40">تذكّر مثال C:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// get_string and printf with %s
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    string answer = get_string("What's your name? ");
+    printf("hello, %s\n", answer);
+}
+</code></pre></div> </div>
+<p data-unit="41">يستخدم مكتبة CS50 لاستقبال مدخلات المستخدم. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/hello1.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="42">ويصبح في Python:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># get_string and print, with concatenation
+
+from cs50 import get_string
+
+answer = get_string("What's your name? ")
+print("hello, " + answer)
+</code></pre></div> </div>
+<p data-unit="43">اكتب <code class="inline-source" dir="ltr">code hello.py</code>، ثم شغّله باستخدام <code class="inline-source" dir="ltr">python hello.py</code>. تجمع <code class="inline-source" dir="ltr">+</code> السلسلتين <code class="inline-source" dir="ltr">"hello, "</code> و<code class="inline-source" dir="ltr">answer</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/hello1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="44">ويمكن فعل ذلك من دون دمج صريح للسلاسل:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># get_string and print, without concatenation
+
+from cs50 import get_string
+
+answer = get_string("What's your name? ")
+print("hello,", answer)
+</code></pre></div> </div>
+<p data-unit="45">تضيف <code class="inline-source" dir="ltr">print</code> مسافة افتراضية بين الوسيطين.</p>
+</li>
+<li data-marker="*">
+<p data-unit="46">ويمكن كتابة المثال أيضًا هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># get_string and print, with format strings
+
+from cs50 import get_string
+
+answer  = get_string("What's your name? ")
+print(f"hello, {answer}")
+</code></pre></div> </div>
+<p data-unit="47">تسمح الأقواس المعقوفة بإدراج <code class="inline-source" dir="ltr">answer</code> في السلسلة، وتحدد البادئة <code class="inline-source" dir="ltr">f</code> أنها سلسلة منسقة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/hello2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="48" id="positional-parameters-and-named-parameters">الوسائط الموضعية والمسمّاة</h2>
+<ul>
+<li data-marker="*" data-unit="49">تستخدم دوال C مثل <code class="inline-source" dir="ltr">fread</code> و<code class="inline-source" dir="ltr">fwrite</code> و<code class="inline-source" dir="ltr">printf</code> وسائط موضعية، فتحدد مواضع الوسائط معانيها، وعليك تذكّر ترتيبها.</li>
+<li data-marker="*" data-unit="50">تتيح Python أيضًا تمرير وسائط بأسمائها عندما يسمح توقيع الدالة بذلك، فلا نعتمد على الموضع وحده.</li>
+<li data-marker="*" data-unit="51">راجع معاملات <code class="inline-source" dir="ltr">print</code> في التوثيق المرتبط. <a href="https://docs.python.org/3/library/functions.html#print" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*">
+<p data-unit="52">قد تجد التوقيع الآتي:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">print(*objects, sep=' ', end='\n', file=None, flush=False)
+</code></pre></div> </div>
+<p data-unit="53">يمكن تمرير عدة كائنات إلى <code class="inline-source" dir="ltr">print</code>. تفصل بينها افتراضيًا مسافة، وتختم الناتج بمحرف سطر جديد.</p>
+</li>
+</ul>
+<h2 data-unit="54" id="variables">المتغيرات</h2>
+<ul>
+<li data-marker="*" data-unit="55">في C كتبنا <code class="inline-source" dir="ltr">int counter = 0;</code>، وفي Python نكتب <code class="inline-source" dir="ltr">counter = 0</code> من دون التصريح باسم النوع.</li>
+<li data-marker="*" data-unit="56">نستخدم <code class="inline-source" dir="ltr">counter += 1</code> للزيادة بواحد؛ لا يوجد عامل <code class="inline-source" dir="ltr">counter++</code> في Python.</li>
+</ul>
+<h2 data-unit="57" id="types">الأنواع</h2>
+<ul>
+<li data-marker="*" data-unit="58">لا يلزم التصريح بنوع المتغير، لكن القيم نفسها لها أنواع. كانت <code class="inline-source" dir="ltr">answer</code> سلسلة نصية لأن دالة الإدخال أعادت سلسلة.</li>
+<li data-marker="*">
+<p data-unit="59">من الأنواع الشائعة في Python:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  bool
+  float
+  int
+  str
+</code></pre></div> </div>
+<p data-unit="60">لا نستخدم هنا <code class="inline-source" dir="ltr">long</code> و<code class="inline-source" dir="ltr">double</code> كاسمي نوعين منفصلين. يدعم <code class="inline-source" dir="ltr">int</code> أعدادًا صحيحة كبيرة بحسب الذاكرة المتاحة، وfloat أعدادًا ذات فاصلة عائمة محدودة الدقة.</p>
+</li>
+<li data-marker="*">
+<p data-unit="61">وتوجد أنواع أخرى منها:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">range   sequence of numbers
+list    sequence of mutable values
+tuple   sequence of immutable values
+dict    collection of key-value pairs
+set     collection of unique values
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="62">يمكن بناء هياكل شبيهة في C، لكن Python توفرها بصيغ أقصر.</li>
+</ul>
+<h2 data-unit="63" id="calculator">آلة حاسبة</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="64">تذكّر <code class="inline-source" dir="ltr">calculator.c</code>:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Addition with int
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    // Prompt user for x
+    int x = get_int("x: ");
+
+    // Prompt user for y
+    int y = get_int("y: ");
+
+    // Perform addition
+    printf("%i\n", x + y);
+}
+</code></pre></div> </div>
+<p data-unit="65">هذا مثال آلة حاسبة بسيطة ببايثون نقارنه بتنفيذ C. رابط المصدر مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/calculator0.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="66">اكتب <code class="inline-source" dir="ltr">code calculator.py</code> ثم:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Addition with int [using get_int]
+
+from cs50 import get_int
+
+# Prompt user for x
+x = get_int("x: ")
+
+# Prompt user for y
+y = get_int("y: ")
+
+# Perform addition
+print(x + y)
+</code></pre></div> </div>
+<p data-unit="67">نستورد مكتبة CS50 ونقرأ <code class="inline-source" dir="ltr">x</code> و<code class="inline-source" dir="ltr">y</code> ونطبع الناتج. لا يلزم تعريف <code class="inline-source" dir="ltr">main</code> لتشغيل هذه التعليمات في Python، وإن كان يمكن استخدامها لتنظيم البرنامج. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/calculator0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="68">لنستغنِ عن تبسيط مكتبة CS50:</p>
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Addition with int [using input]
+
+# Prompt user for x
+x = input("x: ")
+
+# Prompt user for y
+y = input("y: ")
+
+# Perform addition
+print(x + y)
+</code></pre></div> </div>
+<p data-unit="69">لماذا يعطي التشغيل سلوكًا غير متوقع؟</p>
+</li>
+<li data-marker="*">
+<p data-unit="70">لأن input تعيد سلسلة نصية. نحول الناتج إلى عدد باستخدام <code class="inline-source" dir="ltr">int</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Addition with int [using input]
+
+# Prompt user for x
+x = int(input("x: "))
+
+# Prompt user for y
+y = int(input("y: "))
+
+# Perform addition
+print(x + y)
+</code></pre></div> </div>
+<p data-unit="71">تمر مدخلات <code class="inline-source" dir="ltr">x</code> و<code class="inline-source" dir="ltr">y</code> إلى <code class="inline-source" dir="ltr">int</code> لتحويلها إلى أعداد صحيحة. من دون التحويل تجمع <code class="inline-source" dir="ltr">+</code> محارف السلسلتين بدل جمع العددين. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/calculator1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="72" id="conditionals">الشروط</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="73">تذكّر مثال C:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Conditionals, Boolean expressions, relational operators
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    // Prompt user for integers
+    int x = get_int("What's x? ");
+    int y = get_int("What's y? ");
+
+    // Compare integers
+    if (x &lt; y)
+    {
+        printf("x is less than y\n");
+    }
+    else if (x &gt; y)
+    {
+        printf("x is greater than y\n");
+    }
+    else
+    {
+        printf("x is equal to y\n");
+    }
+}
+</code></pre></div> </div>
+<p data-unit="74">هكذا نكتب الشروط في C. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/compare3.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="75">وفي Python:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Conditionals, Boolean expressions, relational operators
+
+from cs50 import get_int
+
+# Prompt user for integers
+x = get_int("What's x? ")
+y = get_int("What's y? ")
+
+# Compare integers
+if x &lt; y:
+    print("x is less than y")
+elif x &gt; y:
+    print("x is greater than y")
+else:
+    print("x is equal to y")
+</code></pre></div> </div>
+<p data-unit="76">لا أقواس معقوفة؛ تحدد المسافات البادئة جسم الفرع. نضع نقطتين بعد الشرط، ونستخدم <code class="inline-source" dir="ltr">elif</code> بدل <code class="inline-source" dir="ltr">else if</code>، ولا تلزم أقواس حول الشرط. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/compare3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="77">تأمل كذلك هذا المثال المنطقي في C:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Logical operators
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    // Prompt user to agree
+    char c = get_char("Do you agree? ");
+
+    // Check whether agreed
+    if (c == 'Y' || c == 'y')
+    {
+        printf("Agreed.\n");
+    }
+    else
+    {
+        printf("Not agreed.\n");
+    }
+}
+</code></pre></div> </div>
+<p data-unit="78">لاحظ العوامل المنطقية. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/agree2.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="79">ويمكن تنفيذه ببايثون هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Logical operators
+
+from cs50 import get_string
+
+# Prompt user to agree
+s = get_string("Do you agree? ")
+
+# Check whether agreed
+if s == "Y" or s == "y":
+    print("Agreed.")
+else:
+    print("Not agreed.")
+</code></pre></div> </div>
+<p data-unit="80">نستخدم <code class="inline-source" dir="ltr">or</code> بدل ||. ولا يوجد نوع <code class="inline-source" dir="ltr">char</code> مستقل؛ نستخدم <code class="inline-source" dir="ltr">str</code> حتى لمحرف واحد. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/agree2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="81">ويمكن كتابة البدائل في قوائم:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Logical operators, using lists
+
+from cs50 import get_string
+
+# Prompt user to agree
+s = get_string("Do you agree? ")
+
+# Check whether agreed
+if s in ["y", "yes"]:
+    print("Agreed.")
+else:
+    print("Not agreed.")
+</code></pre></div> </div>
+<p data-unit="82">تتيح <code class="inline-source" dir="ltr">list</code> جمع بدائل مثل <code class="inline-source" dir="ltr">y</code> و<code class="inline-source" dir="ltr">yes</code> ثم فحص وجود المدخل بينها. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/agree1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="83" id="object-oriented-programming">البرمجة كائنية التوجه</h2>
+<ul>
+<li data-marker="*" data-unit="84">يمكن للكائن أن يملك خصائص وعمليات مرتبطة بنوعه. القيم في Python كائنات.</li>
+<li data-marker="*" data-unit="85">جمعنا متغيرات في <code class="inline-source" dir="ltr">struct</code> في C. وفي Python يمكن تعريف نوع يضم بيانات ودوال؛ والدالة المرتبطة بالنوع أو الكائن تسمّى طريقة Method.</li>
+<li data-marker="*">
+<p data-unit="86">لسلاسل <code class="inline-source" dir="ltr">str</code> طرق جاهزة، فيمكن تعديل المثال:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Logical operators, using lists
+
+# Prompt user to agree
+s = input("Do you agree? ").lower()
+
+# Check whether agreed
+if s in ["y", "yes"]:
+    print("Agreed.")
+else:
+    print("Not agreed.")
+</code></pre></div> </div>
+<p data-unit="87">نستخدم <code class="inline-source" dir="ltr">s.lower()</code> لتوحيد حالة الأحرف قبل المقارنة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/agree2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="88">وتذكّر مثال نسخ السلسلة في C:</p>
+
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Capitalizes a copy of a string without memory errors
+
+#include &lt;cs50.h&gt;
+#include &lt;ctype.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    // Get a string
+    char *s = get_string("s: ");
+    if (s == NULL)
+    {
+        return 1;
+    }
+
+    // Allocate memory for another string
+    char *t = malloc(strlen(s) + 1);
+    if (t == NULL)
+    {
+        return 1;
+    }
+
+    // Copy string into memory
+    strcpy(t, s);
+
+    // Capitalize copy
+    if (strlen(t) &gt; 0)
+    {
+        t[0] = toupper(t[0]);
+    }
+
+    // Print strings
+    printf("s: %s\n", s);
+    printf("t: %s\n", t);
+
+    // Free memory
+    free(t);
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="89">لاحظ عدد سطور التنفيذ. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/4/copy5.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="90">أما ببايثون:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Capitalizes a copy of a string
+
+# Get a string
+s = input("s: ")
+
+# Capitalize copy of string
+t = s.capitalize()
+
+# Print strings
+print(f"s: {s}")
+print(f"t: {t}")
+</code></pre></div> </div>
+<p data-unit="91">البرنامج أقصر كثيرًا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/4/copy.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="92">نغطي جزءًا صغيرًا من Python، لذا يبقى توثيقها مهمًا للتوسع. <a href="https://docs.python.org" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*" data-unit="93">راجع توثيق طرق السلاسل النصية المرتبط. <a href="https://docs.python.org/3/library/stdtypes.html#string-methods" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="94" id="loops">الحلقات</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="95">تشبه أفكار الحلقات ما تعلمته في C. تذكّر:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Demonstrates for loop
+
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    for (int i = 0; i &lt; 3; i++)
+    {
+        printf("meow\n");
+    }
+}
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="96">يمكن كتابة <code class="inline-source" dir="ltr">for</code> ببايثون هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Better design
+
+for i in range(3):
+    print("meow")
+</code></pre></div> </div>
+<p data-unit="97">لا نستخدم <code class="inline-source" dir="ltr">i</code> داخل جسم الحلقة، لكن الحلقة تمر على القيم المعطاة له. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/cat3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="98">ويمكن استخدام <code class="inline-source" dir="ltr">while</code> هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Demonstrates while loop
+
+i = 0
+while i &lt; 3:
+    print("meow")
+    i += 1
+</code></pre></div> </div>
+<p data-unit="99">رابط تنزيل المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/cat1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="100">للتوسع في التكرار أنشئ <code class="inline-source" dir="ltr">uppercase.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Uppercases string one character at a time
+
+before = input("Before: ")
+print("After:  ", end="")
+for c in before:
+    print(c.upper(), end="")
+print()
+</code></pre></div> </div>
+<p data-unit="101">يحدد end ما تطبعه <code class="inline-source" dir="ltr">print</code> في النهاية. تمرير سلسلة فارغة يمنع السطر الجديد بعد كل محرف. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/uppercase0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="102">ونجد في التوثيق طريقة تعمل على السلسلة كلها:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Uppercases string all at once
+
+before = input("Before: ")
+after = before.upper()
+print(f"After:  {after}")
+</code></pre></div> </div>
+<p data-unit="103">تُستدعى upper() على السلسلة كاملة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/uppercase1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="104" id="abstraction">التجريد</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="105">يمكن جمع تفاصيل متكررة في دوال. عدّل <code class="inline-source" dir="ltr">meow.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Abstraction
+
+def main():
+    for i in range(3):
+        meow()
+
+# Meow once
+def meow():
+    print("meow")
+
+
+main()
+</code></pre></div> </div>
+<p data-unit="106">تخفي <code class="inline-source" dir="ltr">meow</code> تعليمة الطباعة خلف اسم واضح. نعرّف <code class="inline-source" dir="ltr">main</code> ثم نستدعيها أسفل الملف بعد اكتمال التعريفات. استخدام <code class="inline-source" dir="ltr">main</code> هنا أسلوب تنظيم شائع، لا شرطًا تفرضه Python. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/cat4.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="107">ويمكن تمرير قيمة بين الدوال:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Abstraction with parameterization
+
+def main():
+    meow(3)
+
+
+# Meow some number of times
+def meow(n):
+    for i in range(n):
+        print("meow")
+
+
+main()
+</code></pre></div> </div>
+<p data-unit="108">تستقبل <code class="inline-source" dir="ltr">meow</code> المعامل <code class="inline-source" dir="ltr">n</code>؛ تستدعيها <code class="inline-source" dir="ltr">main</code> بقيمة مثل <code class="inline-source" dir="ltr">3</code>، فتستخدمها الحلقة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/cat5.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="109">بوصفك مبرمج C، يمكنك فهم اللبنات نفسها رغم اختلاف بعض الصيغ والأعراف.</p>
+</li>
+</ul>
+<h2 data-unit="110" id="truncation-and-floating-point-imprecision">القسمة ودقة الفاصلة العائمة</h2><aside class="editorial-note">توضيح تقني: العامل / للقسمة الحقيقية، أما // فيقرب ناتج القسمة إلى الأسفل، وليس باتجاه الصفر دائمًا. كلاهما يختلف عن قاعدة قسمة الأعداد الصحيحة في C عند القيم السالبة. <a href="https://docs.python.org/3/reference/expressions.html" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*" data-unit="111">في C قد تؤدي قسمة عددين صحيحين إلى حذف الجزء الكسري.</li>
+<li data-marker="*">
+<p data-unit="112">جرّب القسمة في <code class="inline-source" dir="ltr">calculator.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Division with integers, demonstration lack of truncation
+
+# Prompt user for x
+x = int(input("x: "))
+
+# Prompt user for y
+y = int(input("y: "))
+
+# Divide x by y
+z = x / y
+print(z)
+</code></pre></div> </div>
+<p data-unit="113">تعيد / في Python نتيجة ذات فاصلة عائمة هنا؛ لا تُحذف الكسور كما في قسمة <code class="inline-source" dir="ltr">int</code> في C، لكن تبقى حدود تمثيل الكسور الثنائية. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/calculator2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="114">يمكن إظهار مزيد من المنازل:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Floating-point imprecision
+
+# Prompt user for x
+x = int(input("x: "))
+
+# Prompt user for y
+y = int(input("y: "))
+
+# Divide x by y
+z = x / y
+print(f"{z:.50f}")
+</code></pre></div> </div>
+<p data-unit="115">تكشف الطباعة الإضافية عدم الدقة، وهي مشكلة نعرفها من C أيضًا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/calculator3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="116" id="exceptions">الاستثناءات</h2>
+<ul>
+<li data-marker="*" data-unit="117">لنستكشف الأخطاء التي قد تقع أثناء تشغيل Python.</li>
+<li data-marker="*">
+<p data-unit="118">عدّل <code class="inline-source" dir="ltr">integer.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Doesn't handle exception
+
+# Prompt user for an integer
+n = int(input("Input: "))
+print("Integer")
+</code></pre></div> </div>
+<p data-unit="119">قد يسبب إدخال غير صالح استثناء. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/6/integer/integer1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="120">يمكن محاولة التقاط الاستثناء والتعامل معه:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Handles exception
+
+# Prompt user for an integer
+try:
+    n = int(input("Input: "))
+    print("Integer.")
+except ValueError:
+    print("Not integer.")
+</code></pre></div> </div>
+<p data-unit="121">يعيد المثال السؤال حتى ينجح تحويل المدخل إلى النوع المطلوب. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/6/integer/integer2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="122" id="mario">ماريو</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="123">تذكّر رسم عمود من ثلاث كتل كما في تمرين Mario.</p>
+<p><p class="rights-hold">صورة Mario محجوبة مؤقتًا لحين حسم حقوق الطرف الثالث. بديل وصفي: الشكل يوضح عمودًا من ثلاث كتل، أو صفًا من أربع كتل، أو شبكة من ثلاثة صفوف وثلاثة أعمدة. أمثلة الطباعة المقابلة محفوظة في الشيفرة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="124">يمكن تنفيذه ببايثون هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a column of 3 bricks with a loop
+
+for i in range(3):
+    print("#")
+</code></pre></div> </div>
+<p data-unit="125">يطبع عمودًا من ثلاث علامات تمثل الكتل. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/mario0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="126">لا توجد <code class="inline-source" dir="ltr">do-while</code> في Python. يمكن استخدام <code class="inline-source" dir="ltr">while</code> مع break في <code class="inline-source" dir="ltr">mario.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a column of n bricks with a loop
+
+from cs50 import get_int
+
+while True:
+    n = get_int("Height: ")
+    if n &gt; 0:
+        break
+
+for i in range(n):
+    print("#")
+</code></pre></div> </div>
+<p data-unit="127">تستمر الحلقة حتى يُدخل المستخدم ارتفاعًا موجبًا ثم تخرج. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/mario1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="128">تأمل الصف في الشكل:</p>
+<p><p class="rights-hold">صورة Mario محجوبة مؤقتًا لحين حسم حقوق الطرف الثالث. بديل وصفي: الشكل يوضح عمودًا من ثلاث كتل، أو صفًا من أربع كتل، أو شبكة من ثلاثة صفوف وثلاثة أعمدة. أمثلة الطباعة المقابلة محفوظة في الشيفرة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="129">نعدل الشيفرة هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a row of 4 question marks with a loop
+
+for i in range(4):
+    print("?", end="")
+print()
+</code></pre></div> </div>
+<p data-unit="130">نحدد end حتى تبقى الطباعة على السطر نفسه. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/mario2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="131">ويمكن تبسيط البرنامج:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a row of 4 question marks without a loop
+
+print("?" * 4)
+</code></pre></div> </div>
+<p data-unit="132">تكرر <code class="inline-source" dir="ltr">*</code> السلسلة أربع مرات قبل طباعتها. [تصحيح تحريري: لا تكرر تعليمة <code class="inline-source" dir="ltr">print</code> نفسها.] رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/mario3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="133">وماذا عن مربع من الكتل؟</p>
+<p><p class="rights-hold">صورة Mario محجوبة مؤقتًا لحين حسم حقوق الطرف الثالث. بديل وصفي: الشكل يوضح عمودًا من ثلاث كتل، أو صفًا من أربع كتل، أو شبكة من ثلاثة صفوف وثلاثة أعمدة. أمثلة الطباعة المقابلة محفوظة في الشيفرة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="134">نعدّل الشيفرة هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a 3-by-3 grid of bricks with loops
+
+for i in range(3):
+    for j in range(3):
+        print("#", end="")
+    print()
+</code></pre></div> </div>
+<p data-unit="135">حلقة <code class="inline-source" dir="ltr">for</code> داخل أخرى، وبعد كل صف تضيف <code class="inline-source" dir="ltr">print</code> سطرًا جديدًا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/1/mario4.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="136">راجع توثيق <code class="inline-source" dir="ltr">print</code> المرتبط. <a href="https://docs.python.org/3/library/functions.html#print" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="137" id="lists">القوائم</h2>
+<ul>
+<li data-marker="*" data-unit="138">توفر <code class="inline-source" dir="ltr">list</code> هيكل قائمة جاهزًا في Python.</li>
+<li data-marker="*" data-unit="139">وللقوائم طرق مدمجة للتعامل مع عناصرها.</li>
+<li data-marker="*">
+<p data-unit="140">تأمل المثال:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Averages three numbers using a list
+
+# Scores
+scores = [72, 73, 33]
+
+# Print average
+average = sum(scores) / len(scores)
+print(f"Average: {average}")
+</code></pre></div> </div>
+<p data-unit="141">تحسب الدالة المدمجة <code class="inline-source" dir="ltr">sum</code> مجموع العناصر، فنقسمه على عددها للحصول على المتوسط. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/scores0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="142">ويمكن استقبال القيم من المستخدم:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Averages three numbers using a list and a loop
+
+from cs50 import get_int
+
+# Get scores
+scores = []
+for i in range(3):
+    score = get_int("Score: ")
+    scores.append(score)
+
+# Print average
+average = sum(scores) / len(scores)
+print(f"Average: {average}")
+</code></pre></div> </div>
+<p data-unit="143">تضيف الطريقة <code class="inline-source" dir="ltr">append</code> عناصر إلى القائمة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/scores1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="144">راجع توثيق القوائم المرتبط. <a href="https://docs.python.org/3/library/stdtypes.html#sequence-types-list-tuple-range" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*" data-unit="145">وراجع توثيق <code class="inline-source" dir="ltr">len</code> أيضًا. <a href="https://docs.python.org/3/library/functions.html#len" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="146" id="searching-and-dictionaries">البحث والقواميس</h2><aside class="editorial-note">توضيح تقني: تختلف كلفة <code class="inline-source" dir="ltr">in</code> بحسب النوع. في <code class="inline-source" dir="ltr">list</code> نبحث عن قيمة عنصرًا عنصرًا، وفي <code class="inline-source" dir="ltr">dict</code> نبحث عن مفتاح باستخدام جدول تجزئة. هذه ليست العملية نفسها من حيث الدلالة أو التعقيد. <a href="https://wiki.python.org/moin/TimeComplexity" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></aside>
+<ul>
+<li data-marker="*" data-unit="147">يمكن البحث داخل هياكل البيانات.</li>
+<li data-marker="*">
+<p data-unit="148">تأمل <code class="inline-source" dir="ltr">phonebook.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Implements linear search for names using loop
+
+# A list of names
+names = ["Kelly", "David", "John"]
+
+# Ask for name
+name = input("Name: ")
+
+# Search for name
+for n in names:
+    if name == n:
+        print("Found")
+        break
+else:
+    print("Not found")
+</code></pre></div> </div>
+<p data-unit="149">يمر المثال على الأسماء بحثًا خطيًا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/3/phonebook0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="150">ويمكن التعبير عن البحث في القائمة مباشرة:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Implements linear search for names using `in`
+
+# A list of names
+names = ["Kelly", "David", "John"]
+
+# Ask for name
+name = input("Name: ")
+
+# Search for name
+if name in names:
+    print("Found")
+else:
+    print("Not found")
+</code></pre></div> </div>
+<p data-unit="151">تفحص <code class="inline-source" dir="ltr">in</code> عضوية العنصر في القائمة، ويظل البحث خطيًا هنا. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/3/phonebook1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="152">لكن يمكن تحسين اختيار الهيكل نفسه.</li>
+<li data-marker="*" data-unit="153">القاموس <code class="inline-source" dir="ltr">dict</code> مجموعة أزواج مفتاح وقيمة.</li>
+<li data-marker="*">
+<p data-unit="154">يمكن تمثيل بيانات الاسم والرقم هكذا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Implements a phone book as a list of dictionaries, without a variable
+
+from cs50 import get_string
+
+people = [
+    {"name": "Kelly", "number": "+1-617-495-1000"},
+    {"name": "David", "number": "+1-617-495-1000"},
+    {"name": "John", "number": "+1-949-468-2750"},
+]
+
+# Search for name
+name = get_string("Name: ")
+for person in people:
+    if person["name"] == name:
+        print(f"Found {person['number']}")
+        break
+else:
+    print("Not found")
+</code></pre></div> </div>
+<p data-unit="155">تضم البيانات <code class="inline-source" dir="ltr">name</code> و<code class="inline-source" dir="ltr">number</code> لكل إدخال. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/3/phonebook2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="156">ونستطيع استخدام الأسماء نفسها مفاتيح:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Implements a phone book using a dictionary
+
+from cs50 import get_string
+
+people = {
+    "Kelly": "+1-617-495-1000",
+    "David": "+1-617-495-1000",
+    "John": "+1-949-468-2750",
+}
+
+# Search for name
+name = get_string("Name: ")
+if name in people:
+    print(f"Number: {people[name]}")
+else:
+    print("Not found")
+</code></pre></div> </div>
+<p data-unit="157">تحدد الأقواس المعقوفة القاموس. تفحص <code class="inline-source" dir="ltr">if name in people</code> وجود الاسم ضمن المفاتيح، ثم نسترجع الرقم باستخدام <code class="inline-source" dir="ltr">people[name]</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/3/phonebook4.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="158">ويمكن أيضًا إنشاء قائمة من القواميس:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Implements a phone book as a list of dictionaries
+
+people = [
+    {"name": "Kelly", "number": "+1-617-495-1000"},
+    {"name": "David", "number": "+1-617-495-1000"},
+    {"name": "John", "number": "+1-949-468-2750"},
+]
+
+# Search for name
+name = input("Name: ")
+for person in people:
+    if person["name"] == name:
+        number = person["number"]
+        print(f"Found {number}")
+        break
+else:
+    print("Not found")
+</code></pre></div> </div>
+<p data-unit="159">تحتوي <code class="inline-source" dir="ltr">people</code> قواميس منفصلة تفصل بينها فواصل. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/3/phonebook3.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="160">يعتمد زمن البحث على الهيكل: البحث في <code class="inline-source" dir="ltr">list</code> خطي، بينما تكون العضوية بالمفتاح في <code class="inline-source" dir="ltr">dict</code> عادةً ثابتة الزمن في المتوسط، وليست ضمانًا لثبات كل عمليات البحث أو لكل الحالات.</li>
+<li data-marker="*" data-unit="161">راجع توثيق القواميس المرتبط. <a href="https://docs.python.org/3/library/stdtypes.html#dict" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="162" id="command-line-arguments">وسائط سطر الأوامر</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="163">يمكن استخدام وسائط سطر الأوامر كما في C:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Prints a command-line argument
+
+from sys import argv
+
+if len(argv) == 2:
+    print(f"hello, {argv[1]}")
+else:
+    print("hello, world")
+</code></pre></div> </div>
+<p data-unit="164">تطبع السلسلة المنسقة <code class="inline-source" dir="ltr">argv[1]</code> باستخدام البادئة <code class="inline-source" dir="ltr">f</code>. رابط المثال الأصلي مرفق. [تنبيه: يلزم وجود وسيط بهذا الفهرس قبل الوصول إليه.] <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/greet.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="165">راجع توثيق <code class="inline-source" dir="ltr">sys</code> المرتبط. <a href="https://docs.python.org/3/library/sys.html" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="166" id="exit-status">حالة الخروج</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="167">توفر الوحدة <code class="inline-source" dir="ltr">sys</code> الدالة <code class="inline-source" dir="ltr">sys.exit(i)</code> لإنهاء البرنامج بحالة خروج محددة:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Exits with explicit value, importing sys
+
+import sys
+
+if len(sys.argv) != 2:
+    print("Missing command-line argument")
+    sys.exit(1)
+
+print(f"hello, {sys.argv[1]}")
+sys.exit(0)
+</code></pre></div> </div>
+<p data-unit="168">نستخدم النقطة للوصول إلى دوال الوحدة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/2/exit.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="169" id="csv-files">ملفات CSV</h2>
+<ul>
+<li data-marker="*" data-unit="170">توفر Python وحدة جاهزة للتعامل مع ملفات CSV.</li>
+<li data-marker="*">
+<p data-unit="171">عدّل <code class="inline-source" dir="ltr">phonebook.py</code>:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">import csv
+
+file = open("phonebook.csv", "a")
+
+name = input("Name: ")
+number = input("Number: ")
+
+writer = csv.writer(file)
+writer.writerow([name,number])
+
+file.close()
+</code></pre></div> </div>
+<p data-unit="172">تتولى <code class="inline-source" dir="ltr">writerow</code> تنسيق حقول CSV وإضافة الفواصل اللازمة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/4/phonebook0.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="173">يمكن فتح الملف وإغلاقه صراحة باستخدام open وclose، لكن الأفضل هنا:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr"># Uses `with`
+
+import csv
+
+# Get name and number
+name = input("Name: ")
+number = input("Number: ")
+
+# Open CSV file
+with open("phonebook.csv", "a") as file:
+
+    # Print to file
+    writer = csv.writer(file)
+    writer.writerow([name, number])
+</code></pre></div> </div>
+<p data-unit="174">يحدد التدرج جسم <code class="inline-source" dir="ltr">with</code>، وتغلق إدارة السياق الملف عند مغادرة هذا الجسم. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/4/phonebook1.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="175">ويمكن كتابة الحقول باستخدام قاموس:</p>
+
+<div class="language-py highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">import csv
+
+name = input("Name: ")
+number = input("Number: ")
+
+with open("phonebook.csv", "a") as file:
+
+    writer = csv.DictWriter(file, fieldnames=["name", "number"])
+    writer.writerow({"name": name, "number": number})
+</code></pre></div> </div>
+<p data-unit="176">يشبه المثال السابق لكنه يستخدم <code class="inline-source" dir="ltr">csv.DictWriter</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/6/src6/4/phonebook2.py?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+</ul>
+<h2 data-unit="177" id="third-party-libraries">مكتبات الطرف الثالث</h2>
+<ul>
+<li data-marker="*" data-unit="178">من مزايا Python مجتمعها الكبير ومكتباتها الكثيرة.</li>
+<li data-marker="*" data-unit="179">يمكن تثبيت مكتبة CS50 باستخدام <code class="inline-source" dir="ltr">pip install cs50</code> إذا كانت Python وأداة pip متاحتين في بيئتك. <a href="https://python.org" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+<li data-marker="*" data-unit="180">عرض ديفيد أيضًا استخدام <code class="inline-source" dir="ltr">cowsay</code> و<code class="inline-source" dir="ltr">qrcode</code>.</li>
+</ul>
+<h2 data-unit="181" id="summing-up">خلاصة</h2>
+<p data-unit="182">رأيت كيف تنتقل اللبنات التي تعلمتها إلى Python، وكيف تختصر الأدوات عالية المستوى بعض التفاصيل. تعلمت أيضًا استخدام المكتبات. مهارتك في البرمجة ليست مرتبطة بلغة واحدة؛ فهم الأساسيات والبحث في التوثيق يساعدانك على تعلّم غيرها. تناولنا:</p>
+<ul>
+<li data-marker="*" data-unit="183">بايثون.</li>
+<li data-marker="*" data-unit="184">المتغيرات.</li>
+<li data-marker="*" data-unit="185">الشروط.</li>
+<li data-marker="*" data-unit="186">الحلقات.</li>
+<li data-marker="*" data-unit="187">الأنواع.</li>
+<li data-marker="*" data-unit="188">البرمجة كائنية التوجه.</li>
+<li data-marker="*" data-unit="189">حذف الجزء الكسري ودقة الفاصلة العائمة.</li>
+<li data-marker="*" data-unit="190">الاستثناءات.</li>
+<li data-marker="*" data-unit="191">القواميس.</li>
+<li data-marker="*" data-unit="192">وسائط سطر الأوامر.</li>
+<li data-marker="*" data-unit="193">مكتبات الطرف الثالث.</li>
+</ul>
+<p data-unit="194">إلى اللقاء في الدرس القادم!</p>
+</article>
