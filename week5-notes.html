@@ -1,0 +1,797 @@
+<article class="cs50-notes-ar" dir="rtl" lang="ar">
+<h1 class="no_toc" data-unit="0" id="lecture-5">المحاضرة 5: هياكل البيانات</h1><p class="source-credit">ترجمة عربية مستقلة لملاحظات CS50x 2026، المحاضرة 5، لديفيد ج. مالان وفريق CS50 بجامعة هارفارد. التغييرات: ترجمة الشرح والتنقل، أوصاف عربية للأشكال، تصحيحات وتوضيحات تحريرية موسومة. الشيفرة الأصلية محفوظة كما وردت. ليست نسخة رسمية أو معتمدة. <a href="https://cs50.harvard.edu/x/2026/notes/5/" rel="noopener noreferrer" target="_blank">المصدر الأصلي</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0، للاستخدام غير التجاري وبالمشاركة بالمثل</a> · </p>
+<ul id="markdown-toc">
+<li><a href="#/notes/5/?section=welcome" id="markdown-toc-welcome">مرحبًا!</a></li>
+<li><a href="#/notes/5/?section=jack-learns-the-facts" id="markdown-toc-jack-learns-the-facts">Jack Learns the Facts</a></li>
+<li><a href="#/notes/5/?section=data-structures" id="markdown-toc-data-structures">هياكل البيانات</a></li>
+<li><a href="#/notes/5/?section=queues" id="markdown-toc-queues">الطوابير</a></li>
+<li><a href="#/notes/5/?section=stacks" id="markdown-toc-stacks">المكدسات</a></li>
+<li><a href="#/notes/5/?section=arrays" id="markdown-toc-arrays">المصفوفات</a></li>
+<li><a href="#/notes/5/?section=linked-lists" id="markdown-toc-linked-lists">القوائم المترابطة</a></li>
+<li><a href="#/notes/5/?section=trees" id="markdown-toc-trees">الأشجار</a></li>
+<li><a href="#/notes/5/?section=hashing-and-hash-tables" id="markdown-toc-hashing-and-hash-tables">التجزئة وجداول التجزئة</a></li>
+<li><a href="#/notes/5/?section=tries" id="markdown-toc-tries">أشجار البادئات</a></li>
+<li><a href="#/notes/5/?section=summing-up" id="markdown-toc-summing-up">خلاصة</a></li>
+</ul>
+<h2 data-unit="1" id="welcome">مرحبًا!</h2>
+<ul>
+<li data-marker="*" data-unit="2">قدمت الأسابيع السابقة اللبنات الأساسية للبرمجة.</li>
+<li data-marker="*" data-unit="3">ما تعلّمته في C يساعدك على فهم كيفية تنفيذ هذه اللبنات في لغات أعلى مستوى مثل Python.</li>
+<li data-marker="*" data-unit="4">ازدادت المفاهيم صعوبة تدريجيًا. هذا الأسبوع نجمع ما تعلمناه لاستكشاف هياكل البيانات.</li>
+<li data-marker="*" data-unit="5">عرفت حتى الآن كيف تنظّم المصفوفة البيانات في الذاكرة.</li>
+<li data-marker="*" data-unit="6">اليوم نستكشف طرق تنظيم البيانات والاختيارات التي تتيحها معرفتنا المتزايدة.</li>
+</ul>
+<h2 data-unit="7" id="jack-learns-the-facts">Jack Learns the Facts</h2>
+<ul>
+<li data-marker="*" data-unit="8">شاهدنا مقطع Jack Learns the Facts للأستاذة Shannon Duvall من جامعة Elon. <a href="https://www.youtube.com/watch?v=ItAG3s6KIEI" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="9" id="data-structures">هياكل البيانات</h2>
+<ul>
+<li data-marker="*" data-unit="10">هياكل البيانات طرق لتنظيم البيانات في الذاكرة.</li>
+<li data-marker="*" data-unit="11">توجد طرق كثيرة لهذا التنظيم.</li>
+<li data-marker="*" data-unit="12">نبدأ أحيانًا بأنواع بيانات مجردة نحدد سلوكها مفاهيميًا، ثم نفهم كيف ننفذها بهياكل بيانات فعلية.</li>
+</ul>
+<h2 data-unit="13" id="queues">الطوابير</h2>
+<ul>
+<li data-marker="*" data-unit="14">الطابور مثال لنوع بيانات مجرد.</li>
+<li data-marker="*" data-unit="15">يتبع الطابور مبدأ <code class="inline-source" dir="ltr">FIFO</code>: أول من يدخل هو أول من يخرج، مثل صف انتظار لعبة في مدينة ملاهٍ.</li>
+<li data-marker="*" data-unit="16">من عملياته enqueue لإضافة عنصر إلى مؤخرة الطابور، وdequeue لإخراج العنصر الموجود في مقدمته.</li>
+<li data-marker="*">
+<p data-unit="17">يمكن تخيل تمثيل الطابور في الشيفرة هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">const int CAPACITY = 50;
+
+typedef struct
+{
+    person people[CAPACITY];
+    int size;
+}
+queue;
+</code></pre></div> </div>
+<p data-unit="18">المصفوفة <code class="inline-source" dir="ltr">people</code> من عناصر النوع <code class="inline-source" dir="ltr">person</code>. يحدد <code class="inline-source" dir="ltr">CAPACITY</code> السعة القصوى، بينما يتتبع <code class="inline-source" dir="ltr">size</code> عدد العناصر الموجودة حاليًا.</p>
+</li>
+</ul>
+<h2 data-unit="19" id="stacks">المكدسات</h2>
+<ul>
+<li data-marker="*" data-unit="20">بعكس الطابور، يتبع المكدس مبدأ <code class="inline-source" dir="ltr">LIFO</code>: آخر من يدخل هو أول من يخرج، مثل رص الأطباق حيث نرفع الطبق العلوي أولًا.</li>
+<li data-marker="*" data-unit="21">تضيف push عنصرًا إلى قمة المكدس، وتزيل pop العنصر من القمة.</li>
+<li data-marker="*">
+<p data-unit="22">يمكن تخيل تمثيله هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">const int CAPACITY = 50;
+
+typedef struct
+{
+    person people[CAPACITY];
+    int size;
+}
+stack;
+</code></pre></div> </div>
+<p data-unit="23">المصفوفة <code class="inline-source" dir="ltr">people</code> من النوع <code class="inline-source" dir="ltr">person</code>، و<code class="inline-source" dir="ltr">CAPACITY</code> السعة القصوى، و<code class="inline-source" dir="ltr">size</code> العدد الحالي. التصريح مماثل لتصريح الطابور، لكن العمليات التي ننفذها عليه تختلف.</p>
+</li>
+<li data-marker="*" data-unit="24">سعة المصفوفة هنا محددة مسبقًا. قد نحجز 5000 موضع ولا نستخدم إلا واحدًا.</li>
+<li data-marker="*" data-unit="25">سيكون مفيدًا أن يتمدد المكدس مع إضافة العناصر.</li>
+</ul>
+<h2 data-unit="26" id="arrays">المصفوفات</h2>
+<ul>
+<li data-marker="*" data-unit="27">تعرفنا في الأسبوع الثاني على أول هيكل بيانات.</li>
+<li data-marker="*" data-unit="28">المصفوفة عناصر مخزنة في مساحة ذاكرة متجاورة.</li>
+<li data-marker="*">
+<p data-unit="29">يمكن تمثيلها هكذا:</p>
+<p><img alt="مصفوفة من ثلاث خانات متجاورة تحمل 1 و2 و3." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide019.png" width="960"/></p><p class="diagram-description">وصف الشكل: مصفوفة من ثلاث خانات متجاورة تحمل <code class="inline-source" dir="ltr">1</code> و<code class="inline-source" dir="ltr">2</code> و<code class="inline-source" dir="ltr">3</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="30">اكتب <code class="inline-source" dir="ltr">code list.c</code> في الطرفية ثم:</p>
+<!-- list0.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a list of numbers with an array of fixed size
+
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    // List of size 3
+    int list[3];
+
+    // Initialize list with numbers
+    list[0] = 1;
+    list[1] = 2;
+    list[2] = 3;
+
+    // Print list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        printf("%i\n", list[i]);
+    }
+}
+</code></pre></div> </div>
+<p data-unit="31">حجز المثال مساحة لثلاثة عناصر، كما تعلمنا سابقًا. رابط تنزيل المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list0.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="32">ماذا لو وضعنا القيمة الرابعة في مكان آخر؟ لن تكون عندها عنصرًا رابعًا في المصفوفة المتجاورة نفسها. كيف نربط مواضع الذاكرة المتباعدة؟</li>
+<li data-marker="*">
+<p data-unit="33">قد تكون المواضع المجاورة مستخدمة لبيانات أخرى أو تحوي قيمًا غير مهيأة. لا نفترض أنها متاحة للبرنامج. [توضيح تحريري: هذا رسم مفاهيمي، لا إذن بالوصول إلى ذاكرة برامج أخرى.]</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: مصفوفة بين مواضع ذاكرة أخرى.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="34">لإضافة <code class="inline-source" dir="ltr">4</code>، يمكن حجز مساحة جديدة أكبر ونقل عناصر المصفوفة القديمة إليها. تكون المساحة الجديدة غير مهيأة قبل كتابة القيم.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: مصفوفة قديمة من ثلاثة عناصر ومساحة جديدة من أربع خانات غير مهيأة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="35">عند كتابة القيم في المساحة الجديدة نستبدل المحتوى غير المهيأ.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: نُسخت القيم الثلاث إلى المساحة الجديدة وبقيت الخانة الرابعة غير مهيأة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="36">وفي النهاية تمتلئ العناصر الجديدة ببياناتنا.</p>
+<p><img alt="المصفوفة الجديدة تحتوي 1 و2 و3 و4." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide027.png" width="960"/></p><p class="diagram-description">وصف الشكل: المصفوفة الجديدة تحتوي <code class="inline-source" dir="ltr">1</code> و<code class="inline-source" dir="ltr">2</code> و<code class="inline-source" dir="ltr">3</code> و<code class="inline-source" dir="ltr">4</code>.</p>
+</li>
+<li data-marker="*" data-unit="37">لكن حجز مساحة جديدة ونسخ كل العناصر عند كل إضافة يكرر عملًا مكلفًا.</li>
+<li data-marker="*">
+<p data-unit="38">لنستخدم المؤشرات في التنفيذ:</p>
+<!-- list1.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a list of numbers with an array of dynamic size
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    // List of size 3
+    int *list = malloc(3 * sizeof(int));
+    if (list == NULL)
+    {
+        return 1;
+    }
+
+    // Initialize list of size 3 with numbers
+    list[0] = 1;
+    list[1] = 2;
+    list[2] = 3;
+
+    // List of size 4
+    int *tmp = malloc(4 * sizeof(int));
+    if (tmp == NULL)
+    {
+        free(list);
+        return 1;
+    }
+
+    // Copy list of size 3 into list of size 4
+    for (int i = 0; i &lt; 3; i++)
+    {
+        tmp[i] = list[i];
+    }
+
+    // Add number to list of size 4
+    tmp[3] = 4;
+
+    // Free list of size 3
+    free(list);
+
+    // Remember list of size 4
+    list = tmp;
+
+    // Print list
+    for (int i = 0; i &lt; 4; i++)
+    {
+        printf("%i\n", list[i]);
+    }
+
+    // Free list
+    free(list);
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="39">نحجز أولًا مساحة لثلاثة أعداد ونخزن <code class="inline-source" dir="ltr">1</code> و<code class="inline-source" dir="ltr">2</code> و<code class="inline-source" dir="ltr">3</code>، ثم نحجز مساحة لأربعة أعداد وننسخ إليها القيم ونضيف <code class="inline-source" dir="ltr">4</code>. نحرر المساحة القديمة باستخدام <code class="inline-source" dir="ltr">free(list)</code>، ثم نوجّه <code class="inline-source" dir="ltr">list</code> إلى المساحة التي يشير إليها <code class="inline-source" dir="ltr">tmp</code>. نطبع العناصر ثم نحرر المساحة الجديدة. لاحظ تضمين <code class="inline-source" dir="ltr">stdlib.h</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list1.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="40">فكّر في <code class="inline-source" dir="ltr">list</code> و<code class="inline-source" dir="ltr">tmp</code> بوصفهما لافتتين تحملان عنوان مساحة. في النهاية يحملان عنوان المساحة ذات الأربعة عناصر نفسها. وبعد تحريرها لا يجوز استخدام أي منهما للوصول إليها.</li>
+<li data-marker="*">
+<p data-unit="41">يمكن طلب تغيير حجم المساحة باستخدام <code class="inline-source" dir="ltr">realloc</code> بدل كتابة حلقة نسخ بأنفسنا:</p>
+<!-- list2.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a list of numbers with an array of dynamic size using realloc
+
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+int main(void)
+{
+    // List of size 3
+    int *list = malloc(3 * sizeof(int));
+    if (list == NULL)
+    {
+        return 1;
+    }
+
+    // Initialize list of size 3 with numbers
+    list[0] = 1;
+    list[1] = 2;
+    list[2] = 3;
+
+    // Resize list to be of size 4
+    int *tmp = realloc(list, 4 * sizeof(int));
+    if (tmp == NULL)
+    {
+        free(list);
+        return 1;
+    }
+    list = tmp;
+
+    // Add number to list
+    list[3] = 4;
+
+    // Print list
+    for (int i = 0; i &lt; 4; i++)
+    {
+        printf("%i\n", list[i]);
+    }
+
+    // Free list
+    free(list);
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="42">تطلب <code class="inline-source" dir="ltr">realloc</code> تغيير حجم المساحة، وقد تنقلها أو توسّعها في مكانها. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list2.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a> <a href="https://en.cppreference.com/w/c/memory/realloc.html" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></p><aside class="editorial-note">ملاحظة تقنية: عند نجاح <code class="inline-source" dir="ltr">realloc</code> نستخدم المؤشر الناتج؛ وعند فشل طلب حجم غير صفري تعيد <code class="inline-source" dir="ltr">NULL</code> وتبقى المساحة القديمة صالحة، لذلك نحفظ الناتج أولًا في مؤشر مؤقت. بعد free لا نستخدم المؤشرات القديمة للوصول إلى المساحة المحررة.</aside>
+</li>
+<li data-marker="*" data-unit="43">قد نحجز سعة أكبر من حاجتنا، مثل ثلاثين عنصرًا بدل ثلاثة أو أربعة. هذا يوازن بين الذاكرة وعدد مرات تغيير الحجم. [توضيح تحريري: الحجز الاحتياطي ليس تصميمًا سيئًا دائمًا؛ زيادة السعة تدريجيًا، مثل مضاعفتها عند الامتلاء، أسلوب معتاد للمصفوفات الديناميكية.] <a href="https://www.cs.cornell.edu/courses/cs2112/2022fa/lectures/hashtables/" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></li>
+</ul>
+<h2 data-unit="44" id="linked-lists">القوائم المترابطة</h2>
+<ul>
+<li data-marker="*" data-unit="45">تعلمنا <code class="inline-source" dir="ltr">struct</code> لتعريف نوع مركب، والعامل . للوصول إلى حقوله، و<code class="inline-source" dir="ltr">*</code> للتصريح بمؤشر أو فك إشارته.</li>
+<li data-marker="*" data-unit="46">نتعرف الآن على <code class="inline-source" dir="ltr">-&gt;</code>: يصل إلى حقل في بنية عبر مؤشر إليها.</li>
+<li data-marker="*" data-unit="47">تتيح القائمة المترابطة جمع قيم في مواضع متباعدة، وإضافة عقد وحذفها بحسب الحاجة.</li>
+<li data-marker="*">
+<p data-unit="48">تخيّل ثلاث قيم في مواضع ذاكرة منفصلة:</p>
+<p><img alt="القيم 1 و2 و3 في مواضع ذاكرة متفرقة." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide036.png" width="960"/></p><p class="diagram-description">وصف الشكل: القيم <code class="inline-source" dir="ltr">1</code> و<code class="inline-source" dir="ltr">2</code> و<code class="inline-source" dir="ltr">3</code> في مواضع ذاكرة متفرقة.</p>
+</li>
+<li data-marker="*" data-unit="49">كيف نربطها في قائمة؟</li>
+<li data-marker="*">
+<p data-unit="50">يمكن تمثيلها هكذا:</p>
+<p><img alt="كل قيمة في عقدة تحتوي خانة إضافية للمؤشر التالي." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide037.png" width="960"/></p><p class="diagram-description">وصف الشكل: كل قيمة في عقدة تحتوي خانة إضافية للمؤشر التالي.</p>
+</li>
+<li data-marker="*">
+<p data-unit="51">نستخدم مساحة إضافية لمؤشر يتتبع موضع العنصر التالي.</p>
+<p><img alt="خانة next تحمل عنوان العقدة التالية، والأخيرة تحمل NULL." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide041.png" width="960"/></p><p class="diagram-description">وصف الشكل: خانة <code class="inline-source" dir="ltr">next</code> تحمل عنوان العقدة التالية، والأخيرة تحمل <code class="inline-source" dir="ltr">NULL</code>.</p>
+<p data-unit="52">تشير <code class="inline-source" dir="ltr">NULL</code> إلى عدم وجود عقدة تالية.</p>
+</li>
+<li data-marker="*">
+<p data-unit="53">ونحتفظ بمؤشر آخر إلى أول عقدة، أي رأس القائمة.</p>
+<p><img alt="مؤشر مستقل يحمل عنوان رأس القائمة." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide042.png" width="960"/></p><p class="diagram-description">وصف الشكل: مؤشر مستقل يحمل عنوان رأس القائمة.</p>
+</li>
+<li data-marker="*">
+<p data-unit="54">إذا استبدلنا العناوين بأسهم يصبح الشكل:</p>
+<p><img alt="أسهم تربط رأس القائمة بالعقد 1 ثم 2 ثم 3 وتنتهي بـ NULL." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide043.png" width="960"/></p><p class="diagram-description">وصف الشكل: أسهم تربط رأس القائمة بالعقد <code class="inline-source" dir="ltr">1</code> ثم <code class="inline-source" dir="ltr">2</code> ثم <code class="inline-source" dir="ltr">3</code> وتنتهي بـ <code class="inline-source" dir="ltr">NULL</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="55">نسمي كل صندوق عقدة. تحتوي العقدة قيمة ومؤشرًا اسمه <code class="inline-source" dir="ltr">next</code>:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">typedef struct node
+{
+    int number;
+    struct node *next;
+}
+node;
+</code></pre></div> </div>
+<p data-unit="56">تحتوي العقدة عددًا صحيحًا اسمه <code class="inline-source" dir="ltr">number</code> ومؤشرًا إلى عقدة اسمه <code class="inline-source" dir="ltr">next</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="57">لنكتب <code class="inline-source" dir="ltr">list.c</code> باستخدام قائمة مترابطة:</p>
+<!-- list3.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Start to build a linked list by prepending nodes
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node
+{
+    int number;
+    struct node *next;
+} node;
+
+int main(void)
+{
+    // Memory for numbers
+    node *list = NULL;
+
+    // Build list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        // Allocate node for number
+        node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            return 1;
+        }
+        n-&gt;number = get_int("Number: ");
+        n-&gt;next = NULL;
+
+        // Prepend node to list
+        n-&gt;next = list;
+        list = n;
+    }
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="58">نعرّف <code class="inline-source" dir="ltr">node</code> بوصفه <code class="inline-source" dir="ltr">struct</code>. نحجز لكل عقدة مساحة بحجمها باستخدام <code class="inline-source" dir="ltr">malloc</code>، ونسند عددًا إلى <code class="inline-source" dir="ltr">n-&gt;number</code> و<code class="inline-source" dir="ltr">NULL</code> إلى <code class="inline-source" dir="ltr">n-&gt;next</code>، ثم نضع العقدة في أول القائمة بتحديث المؤشر <code class="inline-source" dir="ltr">list</code>. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list3.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="59">نتتبع العملية مفاهيميًا: التصريح <code class="inline-source" dir="ltr">node *list</code> وحده يترك المؤشر غير مهيأ. [تنبيه: ينبغي تهيئته إلى <code class="inline-source" dir="ltr">NULL</code> كما يفعل المثال الكامل، قبل استخدامه.]</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: التصريح بالمؤشر <code class="inline-source" dir="ltr">list</code> دون تهيئة يترك قيمته غير محددة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="60">ثم نحجز عقدة يشير إليها <code class="inline-source" dir="ltr">n</code>.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: حجز عقدة جديدة يشير إليها <code class="inline-source" dir="ltr">n</code>، بينما تظل الحقول غير مهيأة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="61">نضع <code class="inline-source" dir="ltr">1</code> في حقل <code class="inline-source" dir="ltr">number</code>.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: تعيين <code class="inline-source" dir="ltr">1</code> إلى حقل <code class="inline-source" dir="ltr">number</code> في العقدة الجديدة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="62">ونضع <code class="inline-source" dir="ltr">NULL</code> في حقل <code class="inline-source" dir="ltr">next</code>.</p>
+<p><img alt="تهيئة next إلى NULL." height="1232" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide066.png" width="2206"/></p><p class="diagram-description">وصف الشكل: تهيئة <code class="inline-source" dir="ltr">next</code> إلى <code class="inline-source" dir="ltr">NULL</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="63">ننسخ العنوان من <code class="inline-source" dir="ltr">n</code> إلى <code class="inline-source" dir="ltr">list</code>، فيشيران إلى العقدة نفسها.</p>
+<p><img alt="أصبح list وn يشيران إلى العقدة نفسها." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide068.png" width="960"/></p><p class="diagram-description">وصف الشكل: أصبح <code class="inline-source" dir="ltr">list</code> و<code class="inline-source" dir="ltr">n</code> يشيران إلى العقدة نفسها.</p>
+</li>
+<li data-marker="*">
+<p data-unit="64">ثم ننشئ عقدة أخرى؛ حقلاها غير مهيأين في البداية.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: إنشاء عقدة جديدة مع الاحتفاظ بمؤشر القائمة إلى العقدة السابقة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="65">نضع <code class="inline-source" dir="ltr">2</code> في حقل <code class="inline-source" dir="ltr">number</code> للعقدة الجديدة.</p>
+<p><p class="rights-hold">شكل محجوب مؤقتًا لاحتوائه على رسم لعبة لطرف ثالث حتى حسم حقوقه. بديله الوصفي: تعيين <code class="inline-source" dir="ltr">2</code> إلى <code class="inline-source" dir="ltr">number</code> في العقدة الجديدة.</p></p>
+</li>
+<li data-marker="*">
+<p data-unit="66">ونحدّث حقل <code class="inline-source" dir="ltr">next</code> أيضًا.</p>
+<p><img alt="تهيئة next للعقدة الجديدة إلى NULL." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide077.png" width="960"/></p><p class="diagram-description">وصف الشكل: تهيئة <code class="inline-source" dir="ltr">next</code> للعقدة الجديدة إلى <code class="inline-source" dir="ltr">NULL</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="67">حتى لا نفقد الوصول إلى العقدة السابقة، نضع في <code class="inline-source" dir="ltr">next</code> العنوان الحالي الذي يحمله <code class="inline-source" dir="ltr">list</code>.</p>
+<p><img alt="ربط next في العقدة الجديدة برأس القائمة السابق." height="1234" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide084.png" width="2200"/></p><p class="diagram-description">وصف الشكل: ربط <code class="inline-source" dir="ltr">next</code> في العقدة الجديدة برأس القائمة السابق.</p>
+</li>
+<li data-marker="*">
+<p data-unit="68">أخيرًا نجعل <code class="inline-source" dir="ltr">list</code> يشير إلى <code class="inline-source" dir="ltr">n</code>. أصبحت لدينا قائمة من عقدتين.</p>
+<p><img alt="تحديث list ليشير إلى العقدة 2 التي تتبعها العقدة 1." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide086.png" width="960"/></p><p class="diagram-description">وصف الشكل: تحديث <code class="inline-source" dir="ltr">list</code> ليشير إلى العقدة <code class="inline-source" dir="ltr">2</code> التي تتبعها العقدة <code class="inline-source" dir="ltr">1</code>.</p>
+</li>
+<li data-marker="*" data-unit="69">آخر عدد أضفناه يظهر أولًا. لذلك يكون ترتيب المرور من الرأس معكوس ترتيب الإدخال.</li>
+<li data-marker="*">
+<p data-unit="70">يمكن المرور على القائمة وطباعتها كما يأتي:</p>
+<!-- list4.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Print nodes in a linked list with a while loop
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node
+{
+    int number;
+    struct node *next;
+} node;
+
+int main(void)
+{
+    // Memory for numbers
+    node *list = NULL;
+
+    // Build list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        // Allocate node for number
+        node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            return 1;
+        }
+        n-&gt;number = get_int("Number: ");
+        n-&gt;next = NULL;
+
+        // Prepend node to list
+        n-&gt;next = list;
+        list = n;
+    }
+
+    // Print numbers
+    node *ptr = list;
+    while (ptr != NULL)
+    {
+        printf("%i\n", ptr-&gt;number);
+        ptr = ptr-&gt;next;
+    }
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="71">ينشئ <code class="inline-source" dir="ltr">node *ptr = list</code> مؤشرًا مؤقتًا إلى الرأس. تطبع حلقة <code class="inline-source" dir="ltr">while</code> قيمة العقدة الحالية، ثم تنقل <code class="inline-source" dir="ltr">ptr</code> إلى العقدة التالية. رابط المثال الأصلي مرفق. [توضيح: هذا مرور بترتيب القائمة الحالي، وليس ترتيبًا تصاعديًا تلقائيًا.] <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list4.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="72">الإضافة إلى مقدمة هذه القائمة تستغرق <code class="inline-source" dir="ltr">O(1)</code>، لأن عدد تغييرات المؤشرات ثابت بالنسبة إلى طول القائمة.</li>
+<li data-marker="*" data-unit="73">البحث هنا <code class="inline-source" dir="ltr">O(n)</code> في أسوأ حالة؛ قد نضطر إلى المرور بكل العقد. أما الإضافة فتعتمد تكلفتها على موضعها وطريقة الوصول إليه.</li>
+<li data-marker="*" data-unit="74">العقد غير متجاورة ويمكن زيادة عددها ما دامت الموارد تسمح. لكن كل عقدة تحتاج مساحة للمؤشر أيضًا. ولا نصل إلى العنصر رقم <code class="inline-source" dir="ltr">n</code> مباشرة بالفهرس كما في المصفوفة؛ نمر على ما يسبقه. لذلك لا يمنحنا تطبيق فكرة البحث الثنائي على هذه القائمة ميزة الوصول العشوائي السريع التي تعتمد عليها في المصفوفة.</li>
+<li data-marker="*">
+<p data-unit="75">يمكن بدلًا من ذلك إضافة الأعداد في نهاية القائمة:</p>
+<!-- list7.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Appends numbers to a link list
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node
+{
+    int number;
+    struct node *next;
+} node;
+
+int main(void)
+{
+    // Memory for numbers
+    node *list = NULL;
+
+    // Build list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        // Allocate node for number
+        node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            return 1;
+        }
+        n-&gt;number = get_int("Number: ");
+        n-&gt;next = NULL;
+
+        // If list is empty
+        if (list == NULL)
+        {
+            // This node is the whole list
+            list = n;
+        }
+
+        // If list has numbers already
+        else
+        {
+            // Iterate over nodes in list
+            for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+            {
+                // If at end of list
+                if (ptr-&gt;next == NULL)
+                {
+                    // Append node
+                    ptr-&gt;next = n;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Print numbers
+    for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+    {
+        printf("%i\n", ptr-&gt;number);
+    }
+
+    // Free memory
+    node *ptr = list;
+    while (ptr != NULL)
+    {
+        node *next = ptr-&gt;next;
+        free(ptr);
+        ptr = next;
+    }
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="76">يمر هذا المثال على القائمة حتى النهاية، فتستغرق الإضافة <code class="inline-source" dir="ltr">O(n)</code>. ويستخدم <code class="inline-source" dir="ltr">next</code> مؤقتًا لتتبع <code class="inline-source" dir="ltr">ptr-&gt;next</code> أثناء التحرير. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list7.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="77">ويمكن الحفاظ على القائمة مرتبة عند الإضافة:</p>
+<!-- list8.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a sorted linked list of numbers
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node
+{
+    int number;
+    struct node *next;
+} node;
+
+int main(void)
+{
+    // Memory for numbers
+    node *list = NULL;
+
+    // Build list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        // Allocate node for number
+        node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            return 1;
+        }
+        n-&gt;number = get_int("Number: ");
+        n-&gt;next = NULL;
+
+        // If list is empty
+        if (list == NULL)
+        {
+            list = n;
+        }
+
+        // If number belongs at beginning of list
+        else if (n-&gt;number &lt; list-&gt;number)
+        {
+            n-&gt;next = list;
+            list = n; 
+        }
+
+        // If number belongs later in list
+        else
+        {
+            // Iterate over nodes in list
+            for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+            {
+                // If at end of list
+                if (ptr-&gt;next == NULL)
+                {
+                    // Append node
+                    ptr-&gt;next = n;
+                    break;
+                }
+
+                // If in middle of list
+                if (n-&gt;number &lt; ptr-&gt;next-&gt;number)
+                {
+                    n-&gt;next = ptr-&gt;next;
+                    ptr-&gt;next = n;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Print numbers
+    for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+    {
+        printf("%i\n", ptr-&gt;number);
+    }
+
+    // Free memory
+    node *ptr = list;
+    while (ptr != NULL)
+    {
+        node *next = ptr-&gt;next;
+        free(ptr);
+        ptr = next;
+    }
+    return 0;
+}
+</code></pre></div> </div>
+<p data-unit="78">تظل العناصر مرتبة أثناء البناء. وقد نمر على كل العناصر لإيجاد موضع الإضافة، فتكون تكلفة الإضافة الواحدة <code class="inline-source" dir="ltr">O(n)</code> في أسوأ حالة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list8.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*">
+<p data-unit="79">يمكن أيضًا كتابة دالة لتحرير القائمة:</p>
+<!-- list9.c -->
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Frees memory in cases of error too
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+typedef struct node
+{
+    int number;
+    struct node *next;
+} node;
+
+void unload(node *list);
+
+int main(void)
+{
+    // Memory for numbers
+    node *list = NULL;
+
+    // Build list
+    for (int i = 0; i &lt; 3; i++)
+    {
+        // Allocate node for number
+        node *n = malloc(sizeof(node));
+        if (n == NULL)
+        {
+            unload(list);
+            return 1;
+        }
+        n-&gt;number = get_int("Number: ");
+        n-&gt;next = NULL;
+
+        // If list is empty
+        if (list == NULL)
+        {
+            list = n;
+        }
+
+        // If number belongs at beginning of list
+        else if (n-&gt;number &lt; list-&gt;number)
+        {
+            n-&gt;next = list;
+            list = n; 
+        }
+
+        // If number belongs later in list
+        else
+        {
+            // Iterate over nodes in list
+            for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+            {
+                // If at end of list
+                if (ptr-&gt;next == NULL)
+                {
+                    // Append node
+                    ptr-&gt;next = n;
+                    break;
+                }
+
+                // If in middle of list
+                if (n-&gt;number &lt; ptr-&gt;next-&gt;number)
+                {
+                    n-&gt;next = ptr-&gt;next;
+                    ptr-&gt;next = n;
+                    break;
+                }
+            }
+        }
+    }
+
+    // Print numbers
+    for (node *ptr = list; ptr != NULL; ptr = ptr-&gt;next)
+    {
+        printf("%i\n", ptr-&gt;number);
+    }
+
+    // Free memory
+    unload(list);
+    return 0;
+}
+
+void unload(node *list)
+{
+    node *ptr = list;
+    while (ptr != NULL)
+    {
+        node *next = ptr-&gt;next;
+        free(ptr);
+        ptr = next;
+    }
+}
+</code></pre></div> </div>
+<p data-unit="80">تحرر <code class="inline-source" dir="ltr">unload</code> القائمة كاملة. رابط المثال الأصلي مرفق. <a href="https://cdn.cs50.net/2025/fall/lectures/5/src5/list9.c?download" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></p>
+</li>
+<li data-marker="*" data-unit="81">قد تبدو الشيفرة معقدة، لكن المؤشرات تتيح ربط بيانات متفرقة في الذاكرة.</li>
+</ul>
+<h2 data-unit="82" id="trees">الأشجار</h2>
+<ul>
+<li data-marker="*" data-unit="83">توفر المصفوفة تخزينًا متجاورًا، ويمكن استخدام البحث الثنائي عندما تكون مرتبة.</li>
+<li data-marker="*" data-unit="84">هل يمكن الجمع بين ميزات المصفوفات والقوائم المترابطة؟</li>
+<li data-marker="*" data-unit="85">شجرة البحث الثنائية هيكل آخر لتنظيم البيانات والبحث فيها.</li>
+<li data-marker="*">
+<p data-unit="86">تخيّل تسلسلًا مرتبًا من الأعداد:</p>
+<p><img alt="الأعداد من 1 إلى 7 في تسلسل مرتب." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide118.png" width="960"/></p><p class="diagram-description">وصف الشكل: الأعداد من <code class="inline-source" dir="ltr">1</code> إلى 7 في تسلسل مرتب.</p>
+</li>
+<li data-marker="*">
+<p data-unit="87">نجعل القيمة الوسطى جذر الشجرة؛ القيم الأصغر على اليسار والأكبر على اليمين.</p>
+<p><img alt="ترتيب هرمي: 4 في الجذر، و2 و6 في المستوى التالي، ثم 1 و3 و5 و7." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide119.png" width="960"/></p><p class="diagram-description">وصف الشكل: ترتيب هرمي: <code class="inline-source" dir="ltr">4</code> في الجذر، و<code class="inline-source" dir="ltr">2</code> و6 في المستوى التالي، ثم <code class="inline-source" dir="ltr">1</code> و<code class="inline-source" dir="ltr">3</code> و5 و7.</p>
+</li>
+<li data-marker="*">
+<p data-unit="88">تربط المؤشرات العقد الموجودة في مواضع الذاكرة المختلفة.</p>
+<p><img alt="شجرة بحث ثنائية متوازنة تربط أسهمها الجذر 4 بأبنائه وفروعه." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide120.png" width="960"/></p><p class="diagram-description">وصف الشكل: شجرة بحث ثنائية متوازنة تربط أسهمها الجذر <code class="inline-source" dir="ltr">4</code> بأبنائه وفروعه.</p>
+</li>
+<li data-marker="*">
+<p data-unit="89">يمكن البحث في هذه الشجرة هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">bool search(node *tree, int number)
+{
+    if (tree == NULL)
+    {
+        return false;
+    }
+    else if (number &lt; tree-&gt;number)
+    {
+        return search(tree-&gt;left, number);
+    }
+    else if (number &gt; tree-&gt;number)
+    {
+        return search(tree-&gt;right, number);
+    }
+    else if (number == tree-&gt;number)
+    {
+        return true;
+    }
+}
+</code></pre></div> </div>
+<p data-unit="90">تبحث الدالة ذاتيًا في الفرع الأيسر إن كانت القيمة المطلوبة أصغر، وفي الأيمن إن كانت أكبر. عندما تكون الشجرة متوازنة تكون تكلفة البحث <code class="inline-source" dir="ltr">O(log n)</code>.</p>
+</li>
+<li data-marker="*" data-unit="91">يمكن للشجرة أن تنمو وتنكمش بإضافة العقد وحذفها.</li>
+<li data-marker="*" data-unit="92">البحث <code class="inline-source" dir="ltr">O(log n)</code> عند توازن الشجرة. [توضيح: الشجرة غير المتوازنة قد تنحط إلى مسار خطي، فتكون أسوأ حالة <code class="inline-source" dir="ltr">O(n)</code>.]</li>
+</ul>
+<h2 data-unit="93" id="hashing-and-hash-tables">التجزئة وجداول التجزئة</h2>
+<code class="inline-source" dir="ltr">*</code> *Dictionaries* are another data structure.
+<code class="inline-source" dir="ltr">*</code> Dictionaries, like actual book-form dictionaries that have a word and a definition, have a *key* and a *value*.
+<code class="inline-source" dir="ltr">*</code> Dictionaries can offer this speed of access through hashing. 
+<ul>
+<li data-marker="*">
+<p data-unit="94">نهدف أحيانًا إلى <code class="inline-source" dir="ltr">O(1)</code>، أي زمن ثابت بالنسبة إلى عدد العناصر. [تصحيح تحريري: الثبات لا يعني أن العملية فورية أو تستغرق صفرًا من الوقت.]</p>
+<p><img alt="مقارنة نمو الزمن: O(1) ثابت وO(log n) لوغاريتمي وO(n) خطي." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide151.png" width="960"/></p><p class="diagram-description">وصف الشكل: مقارنة نمو الزمن: <code class="inline-source" dir="ltr">O(1)</code> ثابت و<code class="inline-source" dir="ltr">O(log n)</code> لوغاريتمي و<code class="inline-source" dir="ltr">O(n)</code> خطي.</p>
+</li>
+<li data-marker="*" data-unit="95">تحوّل التجزئة مفتاحًا إلى قيمة تساعدنا على الوصول إلى موضع تخزينه لاحقًا.</li>
+<li data-marker="*" data-unit="96">قد نحول apple إلى الحاوية الأولى وberry إلى الثانية. تجميع الكلمات بحسب الحرف الأول مثال بسيط: نبدأ البحث بالحاوية المناسبة بدل فحص كل البيانات.</li>
+<li data-marker="*" data-unit="97">دالة التجزئة خوارزمية تحول المفتاح إلى قيمة، وغالبًا عدد صحيح نستخدمه لتحديد فهرس في جدول التجزئة.</li>
+<li data-marker="*" data-unit="98">يمكن تنفيذ جدول التجزئة بمصفوفة مؤشرات إلى قوائم مترابطة. [توضيح: هذا أحد أساليب معالجة التصادمات، وليس التعريف الوحيد لجداول التجزئة.]</li>
+<li data-marker="*">
+<p data-unit="99">يمكن تخيل الجدول هكذا:</p>
+<p><img alt="مصفوفة رأسية من 26 حاوية للحروف الإنجليزية." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide157.png" width="960"/></p><p class="diagram-description">وصف الشكل: مصفوفة رأسية من 26 حاوية للحروف الإنجليزية.</p>
+<p data-unit="100">نخصص خانة لكل حرف من الحروف الإنجليزية.</p>
+</li>
+<li data-marker="*">
+<p data-unit="101">وعند كل خانة تشير قائمة مترابطة إلى القيم المخزنة في هذه الحاوية:</p>
+<p><img alt="حاوية لكل حرف أول، وتتبعها قائمة أسماء مشتركة فيه." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide169.png" width="960"/></p><p class="diagram-description">وصف الشكل: حاوية لكل حرف أول، وتتبعها قائمة أسماء مشتركة فيه.</p>
+</li>
+<li data-marker="*" data-unit="102">يحدث تصادم عندما تؤدي مفاتيح مختلفة إلى الموضع نفسه. في هذا التمثيل نربطها في قائمة الحاوية نفسها.</li>
+<li data-marker="*">
+<p data-unit="103">يمكن تحسين التوزيع باختيار دالة وجدول أنسب، مثل الاعتماد على أكثر من حرف:</p>
+<p><img alt="توزيع أدق للأسماء بحسب أول ثلاثة حروف." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide184.png" width="960"/></p><p class="diagram-description">وصف الشكل: توزيع أدق للأسماء بحسب أول ثلاثة حروف.</p>
+</li>
+<li data-marker="*">
+<p data-unit="104">تأمل مثال دالة التجزئة:</p>
+<p><img alt="دالة تجزئة تحول الاسم Luigi إلى الفهرس 11." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide173.png" width="960"/></p><p class="diagram-description">وصف الشكل: دالة تجزئة تحول الاسم Luigi إلى الفهرس 11.</p>
+</li>
+<li data-marker="*">
+<p data-unit="105">ويمكن تنفيذها هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">#include &lt;ctype.h&gt;
+
+unsigned int hash(const char *word)
+{
+    return toupper(word[0]) - 'A';
+}
+
+</code></pre></div> </div>
+<p data-unit="106">تعيد hash قيمة <code class="inline-source" dir="ltr">toupper(word[0]) - 'A'</code>. هذا المثال مبسط ويفترض أن الحرف الأول إنجليزي مناسب لهذه العملية.</p>
+</li>
+<li data-marker="*" data-unit="107">نوازن بين ذاكرة أكبر لجدول أوسع قد يقلل التصادمات، وذاكرة أقل قد تزيد طول قوائم الحاويات.</li>
+<li data-marker="*" data-unit="108">في أسوأ حالة قد يستغرق البحث <code class="inline-source" dir="ltr">O(n)</code>، مثل اجتماع المفاتيح كلها في حاوية واحدة. [توضيح: مع دالة جيدة وضبط نسبة العناصر إلى الحاويات، يمكن أن يكون الزمن المتوقع قريبًا من <code class="inline-source" dir="ltr">O(1)</code>، مع احتساب تكلفة معالجة المفتاح نفسه.] <a href="https://www.cs.cornell.edu/courses/cs2112/2022fa/lectures/hashtables/" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></li>
+</ul>
+<h2 data-unit="109" id="tries">أشجار البادئات</h2>
+<ul>
+<li data-marker="*" data-unit="110">شجرة البادئات Trie شجرة ترتبط فيها المسارات بأجزاء المفاتيح، مثل حروف الكلمات. في هذا المثال تحتوي كل عقدة مصفوفة روابط للحروف.</li>
+<li data-marker="*" data-unit="111">يعتمد البحث في Trie على طول المفتاح. [تصحيح تحريري: هو <code class="inline-source" dir="ltr">O(L)</code> لكلمة طولها L، لا زمن ثابت مطلقًا. يمكن اعتباره ثابتًا بالنسبة إلى عدد الكلمات إذا كان طول المفتاح محدودًا.] <a href="https://www.cs.cornell.edu/courses/cs2112/2025fa/hw/a2/a2.pdf" rel="noopener noreferrer" target="_blank">مرجع التوضيح</a></li>
+<li data-marker="*" data-unit="112">قد تستهلك Trie ذاكرة كبيرة. [تصحيح تحريري: حاصل <code class="inline-source" dir="ltr">26 × 4 = 104</code> في المثال يعد خانات روابط الحروف في أربع مصفوفات، لا 104 عقد منشأة بالضرورة. ويعتمد العدد الفعلي على التمثيل واحتساب الجذر.]</li>
+<li data-marker="*">
+<p data-unit="113">تُخزن Toad عبر هذا المسار:</p>
+<p><img alt="مسار T ثم O ثم A ثم D في شجرة بادئات." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide207.png" width="960"/></p><p class="diagram-description">وصف الشكل: مسار T ثم O ثم A ثم D في شجرة بادئات.</p>
+</li>
+<li data-marker="*">
+<p data-unit="114">ثم تشترك Tom معها في البادئة TO وتتفرع بعد ذلك:</p>
+<p><img alt="الكلمتان TOAD وTOM تشتركان في مسار T ثم O وتفترقان بعده." height="540" loading="lazy" src="https://cs50.harvard.edu/x/2026/notes/5/cs50Week5Slide209.png" width="960"/></p><p class="diagram-description">وصف الشكل: الكلمتان TOAD وTOM تشتركان في مسار T ثم O وتفترقان بعده.</p>
+</li>
+<li data-marker="*" data-unit="115">تكلفة البحث <code class="inline-source" dir="ltr">O(L)</code> بحسب طول المفتاح، ولا تعتمد مباشرة على عدد الكلمات المخزنة.</li>
+<li data-marker="*" data-unit="116">العيب هنا مقدار الذاكرة والموارد اللازمة لهذا التمثيل.</li>
+</ul>
+<h2 data-unit="117" id="summing-up">خلاصة</h2>
+<p data-unit="118">تعلّمت استخدام المؤشرات لبناء هياكل بيانات جديدة، وبالتحديد:</p>
+<ul>
+<li data-marker="*" data-unit="119">هياكل البيانات.</li>
+<li data-marker="*" data-unit="120">المكدسات والطوابير.</li>
+<li data-marker="*" data-unit="121">القوائم المترابطة.</li>
+<li data-marker="*" data-unit="122">التجزئة وجداول التجزئة.</li>
+<li data-marker="*" data-unit="123">أشجار البادئات.</li>
+</ul>
+<p data-unit="124">إلى اللقاء في الدرس القادم!</p>
+</article>
