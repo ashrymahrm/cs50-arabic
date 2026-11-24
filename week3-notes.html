@@ -1,0 +1,635 @@
+<article class="cs50-notes-ar" dir="rtl" lang="ar">
+<h1 class="no_toc" data-unit="0" id="lecture-3">المحاضرة 3: الخوارزميات</h1><p class="source-credit">ترجمة عربية مستقلة لملاحظات CS50x 2026، المحاضرة 3، لديفيد ج. مالان وفريق CS50 بجامعة هارفارد. التغييرات: ترجمة الشرح والتنقل، أوصاف عربية للرسوم، وملاحظات تقنية موسومة. أمثلة الشيفرة والشيفرة الكاذبة والجداول محفوظة كما وردت. ليست نسخة رسمية أو معتمدة من الجامعة. <a href="https://cs50.harvard.edu/x/2026/notes/3/" rel="noopener noreferrer" target="_blank">المصدر الأصلي</a> · <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener noreferrer" target="_blank">CC BY-NC-SA 4.0، للاستخدام غير التجاري وبالمشاركة بالمثل</a>.</p>
+<ul id="markdown-toc">
+<li><a href="#/notes/3/?section=welcome" id="markdown-toc-welcome">مرحبًا!</a></li>
+<li><a href="#/notes/3/?section=linear-search" id="markdown-toc-linear-search">البحث الخطي</a></li>
+<li><a href="#/notes/3/?section=binary-search" id="markdown-toc-binary-search">البحث الثنائي</a></li>
+<li><a href="#/notes/3/?section=running-time" id="markdown-toc-running-time">زمن التنفيذ</a></li>
+<li><a href="#/notes/3/?section=searchc" id="markdown-toc-searchc">البرنامج search.c</a></li>
+<li><a href="#/notes/3/?section=phonebookc" id="markdown-toc-phonebookc">البرنامج phonebook.c</a></li>
+<li><a href="#/notes/3/?section=structs" id="markdown-toc-structs">البُنى Structs</a></li>
+<li><a href="#/notes/3/?section=sorting-and-selection-sort" id="markdown-toc-sorting-and-selection-sort">الترتيب وخوارزمية الاختيار</a></li>
+<li><a href="#/notes/3/?section=bubble-sort" id="markdown-toc-bubble-sort">الترتيب الفقاعي</a></li>
+<li><a href="#/notes/3/?section=recursion" id="markdown-toc-recursion">الاستدعاء الذاتي</a></li>
+<li><a href="#/notes/3/?section=merge-sort" id="markdown-toc-merge-sort">الترتيب بالدمج</a></li>
+<li><a href="#/notes/3/?section=summing-up" id="markdown-toc-summing-up">خلاصة</a></li>
+</ul>
+<h2 data-unit="1" id="welcome">مرحبًا!</h2>
+<ul>
+<li data-marker="*" data-unit="2">قدّمنا في الأسبوع صفر فكرة الخوارزمية: صندوق أسود قد يستقبل مدخلات وينتج مخرجات.</li>
+<li data-marker="*" data-unit="3">هذا الأسبوع سنوسّع فهمنا للخوارزميات، بدءًا من الشيفرة الكاذبة ووصولًا إلى الشيفرة الفعلية.</li>
+<li data-marker="*" data-unit="4">سنفكّر أيضًا في كفاءة الخوارزميات، مستفيدين من مفاهيم الأسبوع الماضي لبنائها.</li>
+<li data-marker="*">
+<p data-unit="5">تأمل الرسم البياني الآتي:</p>
+رسم يقارن معدلات نمو زمن التنفيذ.
+<figure aria-label="Runtime growth comparison: n, n/2, and log₂ n" role="img" style="margin:0">
+<svg aria-label="مقارنة نمو عدد الخطوات مع حجم المشكلة: منحنيات خطية ومنحنى لوغاريتمي يتزايد ببطء أكبر." height="auto" role="img" style="display:block" viewbox="0 0 960 540" width="100%" xmlns="http://www.w3.org/2000/svg">
+<!-- background -->
+<rect fill="#000" height="540" width="960"></rect>
+<!-- axes (L=80, R=900, T=60, B=480) -->
+<line stroke="#777" stroke-width="2" x1="80" x2="80" y1="60" y2="480"></line>
+<line stroke="#777" stroke-width="2" x1="80" x2="900" y1="480" y2="480"></line>
+<!-- axis labels -->
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="22" text-anchor="middle" x="490" y="515">حجم المشكلة</text>
+<text dominant-baseline="middle" fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="22" text-anchor="middle" transform="rotate(-90 40 270)" x="40" y="270">عدد الخطوات</text>
+<!-- n (red) -->
+<line stroke="#e10600" stroke-linecap="round" stroke-width="6" x1="80" x2="240" y1="480" y2="90"></line>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="26" x="250" y="90">n</text>
+<!-- n/2 (yellow) -->
+<line stroke="#ffe66d" stroke-linecap="round" stroke-width="6" x1="80" x2="340" y1="480" y2="120"></line>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="26" x="350" y="120">n/2</text>
+<!-- log2 n (green curve) -->
+<path d="M80,480 C120,380 260,340 520,320 C700,306 820,302 900,300" fill="none" stroke="#39d353" stroke-linecap="round" stroke-width="6"></path>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="28" text-anchor="end" x="885" y="335">log₂ n</text>
+</svg><p class="diagram-description">وصف الرسم: المحور الأفقي حجم المشكلة، والرأسي عدد الخطوات. المنحنيان الخطيان ينموان أسرع من المنحنى اللوغاريتمي عندما يكبر حجم المشكلة.</p>
+</figure>
+</li>
+<li data-marker="*" data-unit="6">قد تكون الخوارزمية بطيئة فتحتاج إلى وقت ومعالجة أكثر، أو سريعة فتحتاج إلى وقت ومعالجة أقل.</li>
+<li data-marker="*" data-unit="7">فكّر هذا الأسبوع في أثر طريقة عمل الخوارزمية على الزمن اللازم لحل المشكلة. يمكن تحسين كفاءة الخوارزميات، لكن لكل مشكلة حدودًا لما يمكن تحقيقه.</li>
+<li data-marker="*" data-unit="8">سنركّز اليوم على تصميم الخوارزميات وقياس كفاءتها.</li>
+</ul>
+<h2 data-unit="9" id="linear-search">البحث الخطي</h2>
+<ul>
+<li data-marker="*" data-unit="10">تعرّفنا الأسبوع الماضي على المصفوفة، وهي عناصر مخزنة في مواضع متجاورة في الذاكرة.</li>
+<li data-marker="*">
+<p data-unit="11">تخيّل المصفوفة كصف من سبع خزائن حمراء:</p>
+<p><!-- Seven red lockers side by side --></p>
+<table aria-label="Array of 7 red boxes indexed 0 through 6" dir="ltr" role="img" style="width:min(100%,420px);margin:0;margin-right:auto;border-collapse:collapse;">
+<tbody><tr>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+</tr>
+<tr>
+<td>[0]</td>
+<td>[1]</td>
+<td>[2]</td>
+<td>[3]</td>
+<td>[4]</td>
+<td>[5]</td>
+<td>[6]</td>
+</tr>
+</tbody></table>
+</li>
+<li data-marker="*" data-unit="12">الموضع في أقصى اليسار هو الفهرس <code class="inline-source" dir="ltr">0</code>، بداية المصفوفة، والموضع في أقصى اليمين هو الفهرس <code class="inline-source" dir="ltr">6</code>، نهايتها.</li>
+<li data-marker="*" data-unit="13">لنفترض أننا نريد معرفة هل العدد <code class="inline-source" dir="ltr">50</code> موجود في المصفوفة. على الحاسوب فحص الخزائن لمعرفة ذلك. نسمي عملية العثور على عدد أو محرف أو سلسلة أو عنصر آخر «البحث».</li>
+<li data-marker="*" data-unit="14">يمكن تمرير المصفوفة إلى خوارزمية تفحص الخزائن وتعيد <code class="inline-source" dir="ltr">true</code> أو <code class="inline-source" dir="ltr">false</code> بحسب وجود العدد <code class="inline-source" dir="ltr">50</code> خلف أحد الأبواب.</li>
+<li data-marker="*">
+<p data-unit="15">قد نعطي الخوارزمية التعليمات الآتية:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">For each door from left to right
+    If 50 is behind door
+        Return true
+Return false
+</code></pre></div> </div>
+<p data-unit="16">هذه التعليمات شيفرة كاذبة: وصف يستطيع الإنسان قراءته للتعليمات التي قد نعطيها للحاسوب.</p>
+</li>
+<li data-marker="*">
+<p data-unit="17">يمكن لعالم الحاسب صياغة الوصف بصورة أقرب إلى البرمجة:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">For i from 0 to n-1
+    If 50 is behind doors[i]
+        Return true
+Return false
+</code></pre></div> </div>
+<p data-unit="18">ما زال هذا الوصف ليس شيفرة فعلية، لكنه قريب من شكلها النهائي.</p>
+</li>
+</ul>
+<h2 data-unit="19" id="binary-search">البحث الثنائي</h2>
+<ul>
+<li data-marker="*" data-unit="20">البحث الثنائي خوارزمية أخرى يمكن استخدامها للعثور على العدد <code class="inline-source" dir="ltr">50</code>.</li>
+<li data-marker="*">
+<p data-unit="21">إذا كانت القيم داخل الخزائن مرتبة من الأصغر إلى الأكبر، فستكون الشيفرة الكاذبة للبحث الثنائي كما يأتي:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">If no doors left
+    Return false
+If 50 is behind middle door
+    Return true
+Else if 50 &lt; middle door
+    Search left half
+Else if 50 &gt; middle door
+    Search right half
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="22">وباستخدام مفردات أقرب إلى الشيفرة يمكن تعديلها هكذا:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">If no doors left
+    Return false
+If 50 is behind doors[middle]
+    Return true
+Else if 50 &lt; doors[middle]
+    Search doors[0] through doors[middle - 1]
+Else if 50 &gt; doors[middle]
+    Search doors[middle + 1] through doors[n - 1]
+</code></pre></div> </div>
+<p data-unit="23">من هذا الوصف القريب من الشيفرة، يمكنك تخيّل التنفيذ البرمجي الفعلي.</p>
+</li>
+</ul>
+<h2 data-unit="24" id="running-time">زمن التنفيذ</h2><aside class="editorial-note">ملاحظة تقنية تحريرية: O يعبّر عن حد علوي تقاربي، وΩ عن حد سفلي، وΘ عن حد محكم. ليست هذه الرموز مرادفات تلقائية للأسوأ والأفضل؛ نحدد أولًا دالة الزمن التي نحللها. مثلًا، أفضل حالة للبحث الخطي والثنائي قد تكون Θ(1) إذا كان العنصر في أول موضع مفحوص، بينما أسوأ حالة للبحث الثنائي Θ(log n). كذلك ترتيب القائمة له تكلفة؛ لا نفترض أن ترتيبها أولًا أوفر لعملية بحث واحدة دائمًا.</aside>
+<ul>
+<li data-marker="*" data-unit="25">يمكن تحليل الزمن الذي تحتاج إليه الخوارزمية لحل المشكلة.</li>
+<li data-marker="*">
+<p data-unit="26">نحلّل زمن التنفيذ باستخدام ترميز Big O. انظر إلى الرسم الآتي:</p>
+رسم يقارن معدلات نمو زمن التنفيذ.
+<figure aria-label="Runtime growth comparison in big o: n, n/2, and log₂ n" role="img" style="margin:0">
+<svg aria-label="مقارنة نمو عدد الخطوات مع حجم المشكلة: منحنيات خطية ومنحنى لوغاريتمي يتزايد ببطء أكبر." height="auto" role="img" style="display:block" viewbox="0 0 960 540" width="100%" xmlns="http://www.w3.org/2000/svg">
+<!-- background -->
+<rect fill="#000" height="540" width="960"></rect>
+<!-- axes (L=80, R=900, T=60, B=480) -->
+<line stroke="#777" stroke-width="2" x1="80" x2="80" y1="60" y2="480"></line>
+<line stroke="#777" stroke-width="2" x1="80" x2="900" y1="480" y2="480"></line>
+<!-- axis labels -->
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="22" text-anchor="middle" x="490" y="515">حجم المشكلة</text>
+<text dominant-baseline="middle" fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="22" text-anchor="middle" transform="rotate(-90 40 270)" x="40" y="270">عدد الخطوات</text>
+<!-- n (red) -->
+<line stroke="#e10600" stroke-linecap="round" stroke-width="6" x1="80" x2="240" y1="480" y2="90"></line>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="26" x="250" y="90">O(n)</text>
+<!-- n/2 (yellow) -->
+<line stroke="#ffe66d" stroke-linecap="round" stroke-width="6" x1="80" x2="340" y1="480" y2="120"></line>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="26" x="350" y="120">O(n/2)</text>
+<!-- log2 n (green curve) -->
+<path d="M80,480 C120,380 260,340 520,320 C700,306 820,302 900,300" fill="none" stroke="#39d353" stroke-linecap="round" stroke-width="6"></path>
+<text fill="#fff" font-family="system-ui,-apple-system,Segoe UI,Roboto" font-size="28" text-anchor="end" x="885" y="335">O(log₂ n)</text>
+</svg><p class="diagram-description">وصف الرسم: المحور الأفقي حجم المشكلة، والرأسي عدد الخطوات. المنحنيان الخطيان ينموان أسرع من المنحنى اللوغاريتمي عندما يكبر حجم المشكلة.</p>
+</figure>
+</li>
+<li data-marker="*" data-unit="27">بدل وصف الكفاءة بأرقام دقيقة جدًا، يناقش علماء الحاسب معدل نمو أزمنة التنفيذ.</li>
+<li data-marker="*" data-unit="28">في الرسم، الخوارزمية الأولى من الرتبة <code class="inline-source" dir="ltr">O(n)</code>، والثانية أيضًا من الرتبة <code class="inline-source" dir="ltr">O(n)</code>، لأننا نهمل العوامل الثابتة في Big O. أما الثالثة فمن الرتبة <code class="inline-source" dir="ltr">O(log n)</code>.</li>
+<li data-marker="*">
+<p data-unit="29">يوضح شكل المنحنى كفاءة الخوارزمية. من معدلات النمو الشائعة:</p>
+<ul>
+<li data-marker="*" data-unit="30"><code class="inline-source" dir="ltr">O(n²)</code></li>
+<li data-marker="*" data-unit="31"><code class="inline-source" dir="ltr">O(n log n)</code></li>
+<li data-marker="*" data-unit="32"><code class="inline-source" dir="ltr">O(n)</code></li>
+<li data-marker="*" data-unit="33"><code class="inline-source" dir="ltr">O(log n)</code></li>
+<li data-marker="*" data-unit="34"><code class="inline-source" dir="ltr">O(1)</code></li>
+</ul>
+</li>
+<li data-marker="*" data-unit="35">من المعدلات السابقة، ينمو <code class="inline-source" dir="ltr">O(n²)</code> بأكبر سرعة، بينما <code class="inline-source" dir="ltr">O(1)</code> ثابت ولا ينمو مع حجم المدخلات.</li>
+<li data-marker="*" data-unit="36">البحث الخطي من الرتبة <code class="inline-source" dir="ltr">O(n)</code>، لأنه قد يحتاج إلى n خطوة في أسوأ حالة.</li>
+<li data-marker="*" data-unit="37">البحث الثنائي من الرتبة <code class="inline-source" dir="ltr">O(log n)</code>، لأنه يستبعد في كل خطوة جزءًا كبيرًا من العناصر المتبقية، حتى في أسوأ حالة.</li>
+<li data-marker="*" data-unit="38">يهتم المبرمجون بالحالة الأسوأ وحدها العلوي، وبالحالة الأفضل وحدها السفلي أيضًا.</li>
+<li data-marker="*" data-unit="39">يقدّم المصدر الرمز Ω لوصف حد سفلي، ويربطه هنا بتحليل الحالة الأفضل، مثل <code class="inline-source" dir="ltr">Ω(log n)</code>. راجع الملاحظة التقنية أدناه للتفريق بين المفهومين.</li>
+<li data-marker="*" data-unit="40">يستخدم المصدر الرمز Θ عندما يتطابق معدل الحدين العلوي والسفلي، ويصفه هنا بتساوي معدلي الحالتين الأفضل والأسوأ. راجع الملاحظة التقنية للتحديد الأدق.</li>
+<li data-marker="*" data-unit="41">الترميز التقاربي يصف نمو تكلفة الخوارزمية كلما كبر حجم المدخلات.</li>
+<li data-marker="*" data-unit="42">ستدرس هذه الموضوعات بتفصيل أوسع مع تقدمك في علوم الحاسب.</li>
+</ul>
+<h2 data-unit="43" id="searchc">البرنامج search.c</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="44">لتنفيذ البحث الخطي، اكتب <code class="inline-source" dir="ltr">code search.c</code> في الطرفية، ثم:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements linear search for integers
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+int main(void)
+{
+    // An array of integers
+    int numbers[] = {20, 500, 10, 5, 100, 1, 50};
+
+    // Search for number
+    int n = get_int("Number: ");
+    for (int i = 0; i &lt; 7; i++)
+    {
+        if (numbers[i] == n)
+        {
+            printf("Found\n");
+            return 0;
+        }
+    }
+    printf("Not found\n");
+    return 1;
+}
+</code></pre></div> </div>
+<p data-unit="45">يتيح التصريح الذي يبدأ بـ <code class="inline-source" dir="ltr">int numbers[]</code> تحديد قيم عناصر المصفوفة عند إنشائها. وتنفذ حلقة <code class="inline-source" dir="ltr">for</code> البحث الخطي. يعيد <code class="inline-source" dir="ltr">return 0</code> حالة نجاح وينهي البرنامج، بينما يعيد <code class="inline-source" dir="ltr">return 1</code> حالة فشل وينهيه.</p>
+</li>
+<li data-marker="*" data-unit="46">لقد نفّذنا البحث الخطي بأنفسنا بلغة C!</li>
+<li data-marker="*">
+<p data-unit="47">وماذا لو أردنا البحث عن سلسلة نصية في مصفوفة؟ عدّل الشيفرة هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements linear search for strings
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    // An array of strings
+    string strings[] = {"battleship", "boot", "cannon", "iron", "thimble", "top hat"};
+
+    // Search for string
+    string s = get_string("String: ");
+    for (int i = 0; i &lt; 6; i++)
+    {
+        if (strcmp(strings[i], s) == 0)
+        {
+            printf("Found\n");
+            return 0;
+        }
+    }
+    printf("Not found\n");
+    return 1;
+}
+</code></pre></div> </div>
+<p data-unit="48">لا نستخدم <code class="inline-source" dir="ltr">==</code> لمقارنة محتوى السلاسل هنا. نستخدم <code class="inline-source" dir="ltr">strcmp</code> من المكتبة <code class="inline-source" dir="ltr">string.h</code>، وهي تعيد <code class="inline-source" dir="ltr">0</code> عند تطابق السلسلتين. لاحظ أيضًا تثبيت طول المصفوفة في الشيفرة بالقيمة <code class="inline-source" dir="ltr">6</code>، وهو أسلوب أقل قابلية للصيانة.</p>
+</li>
+<li data-marker="*" data-unit="49">يمر البرنامج على مصفوفة السلاسل للبحث عن السلسلة المطلوبة. إذا ظهر segmentation fault، أي محاولة وصول إلى ذاكرة غير مسموح بها، فتأكد أنك كتبت <code class="inline-source" dir="ltr">i &lt; 6</code> لا <code class="inline-source" dir="ltr">i &lt; 7</code>.</li>
+<li data-marker="*" data-unit="50">اقرأ المزيد عن <code class="inline-source" dir="ltr">strcmp</code> في صفحات دليل CS50. <a href="https://manual.cs50.io/3/strcmp" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="51" id="phonebookc">البرنامج phonebook.c</h2>
+<ul>
+<li data-marker="*">
+<p data-unit="52">يمكن جمع فكرتي الأعداد والسلاسل في برنامج واحد. اكتب <code class="inline-source" dir="ltr">code phonebook.c</code> في الطرفية، ثم:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a phone book without structs
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+int main(void)
+{
+    // Arrays of strings
+    string names[] = {"Kelly", "David", "John"};
+    string numbers[] = {"+1-617-495-1000", "+1-617-495-1000", "+1-949-468-2750"};
+
+    // Search for name
+    string name = get_string("Name: ");
+    for (int i = 0; i &lt; 3; i++)
+    {
+        if (strcmp(names[i], name) == 0)
+        {
+            printf("Found %s\n", numbers[i]);
+            return 0;
+        }
+    }
+    printf("Not found\n");
+    return 1;
+}
+</code></pre></div> </div>
+<p data-unit="53">رقم Kelly يبدأ بـ <code class="inline-source" dir="ltr">+1-617</code>، ورقم David يبدأ بـ <code class="inline-source" dir="ltr">+1-617</code>، ورقم John يبدأ بـ <code class="inline-source" dir="ltr">+1-949</code>. العنصر <code class="inline-source" dir="ltr">names[0]</code> هو Kelly، و<code class="inline-source" dir="ltr">numbers[0]</code> رقمها. تتيح هذه الشيفرة البحث عن رقم شخص معين في دليل الهاتف.</p>
+</li>
+<li data-marker="*">
+<p data-unit="54">تعمل الشيفرة، لكن تنظيمها يعرّضنا للأخطاء: فقد لا تتطابق الأسماء مع أرقامها إذا تغير ترتيب إحدى المصفوفتين وحدها. ألن يكون أفضل أن ننشئ نوع بيانات يربط الشخص برقمه؟</p>
+</li>
+</ul>
+<h2 data-unit="55" id="structs">البُنى Structs</h2>
+<ul>
+<li data-marker="*" data-unit="56">تتيح C إنشاء أنواع بيانات خاصة بنا باستخدام <code class="inline-source" dir="ltr">struct</code>.</li>
+<li data-marker="*">
+<p data-unit="57">يمكن إنشاء نوع اسمه <code class="inline-source" dir="ltr">person</code> يحتوي على <code class="inline-source" dir="ltr">name</code> و<code class="inline-source" dir="ltr">number</code>. تأمل:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">typedef struct
+{
+    string name;
+    string number;
+} person;
+</code></pre></div> </div>
+<p data-unit="58">يمثل هذا نوعًا جديدًا اسمه <code class="inline-source" dir="ltr">person</code>، يحتوي على سلسلة اسمها <code class="inline-source" dir="ltr">name</code> وأخرى اسمها <code class="inline-source" dir="ltr">number</code>.</p>
+</li>
+<li data-marker="*">
+<p data-unit="59">يمكن تحسين برنامج دليل الهاتف السابق هكذا:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Implements a phone book with structs
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+typedef struct
+{
+    string name;
+    string number;
+} person;
+
+int main(void)
+{
+    person people[3];
+
+    people[0].name = "Kelly";
+    people[0].number = "+1-617-495-1000";
+
+    people[1].name = "David";
+    people[1].number = "+1-617-495-1000";
+
+    people[2].name = "John";
+    people[2].number = "+1-949-468-2750";
+
+    // Search for name
+    string name = get_string("Name: ");
+    for (int i = 0; i &lt; 3; i++)
+    {
+        if (strcmp(people[i].name, name) == 0)
+        {
+            printf("Found %s\n", people[i].number);
+            return 0;
+        }
+    }
+    printf("Not found\n");
+    return 1;
+}
+</code></pre></div> </div>
+<p data-unit="60">تبدأ الشيفرة بـ <code class="inline-source" dir="ltr">typedef struct</code> لتعريف النوع <code class="inline-source" dir="ltr">person</code>. يحتوي كل عنصر على <code class="inline-source" dir="ltr">name</code> و<code class="inline-source" dir="ltr">number</code> من نوع <code class="inline-source" dir="ltr">string</code>. تنشئ <code class="inline-source" dir="ltr">main</code> مصفوفة <code class="inline-source" dir="ltr">people</code> من النوع <code class="inline-source" dir="ltr">person</code> بحجم 3، ثم تسند أسماء الأشخاص الثلاثة وأرقامهم. يتيح استخدام النقطة، مثل <code class="inline-source" dir="ltr">people[0].name</code>، الوصول إلى حقل الاسم في الشخص ذي الفهرس <code class="inline-source" dir="ltr">0</code> وإسناد قيمة إليه.</p>
+</li>
+</ul>
+<h2 data-unit="61" id="sorting-and-selection-sort">الترتيب وخوارزمية الاختيار</h2>
+<ul>
+<li data-marker="*" data-unit="62">الترتيب هو تحويل قائمة قيم غير مرتبة إلى قائمة مرتبة.</li>
+<li data-marker="*" data-unit="63">قد يجعل ترتيب القائمة البحث فيها أقل تكلفة. تذكّر أن البحث الثنائي يتطلب قائمة مرتبة، ولا يصلح مباشرة لقائمة غير مرتبة.</li>
+<li data-marker="*" data-unit="64">توجد خوارزميات ترتيب كثيرة.</li>
+<li data-marker="*" data-unit="65">إحداها خوارزمية الترتيب بالاختيار، Selection Sort.</li>
+<li data-marker="*">
+<p data-unit="66">يمكن تمثيل المصفوفة هكذا:</p>
+<p> Seven red lockers side by side with the last labeled as <code class="inline-source" dir="ltr">n-1</code> </p>
+<table aria-label="Seven red lockers side by side with the last labeled as n-1" dir="ltr" role="img" style="width:min(100%,420px);margin:0;margin-right:auto;border-collapse:collapse;table-layout:fixed;">
+<colgroup>
+<!-- 7 equal columns -->
+<col span="7" style="width:14.2857%"/>
+</colgroup>
+<tbody><tr>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+<td style="background:#e10600;height:44px;"></td>
+</tr>
+<tr>
+<td style="text-align:center;white-space:nowrap;">[0]</td>
+<td style="text-align:center;white-space:nowrap;">[1]</td>
+<td style="text-align:center;white-space:nowrap;">[2]</td>
+<td style="text-align:center;white-space:nowrap;">[...]</td>
+<td style="text-align:center;white-space:nowrap;">[n-3]</td>
+<td style="text-align:center;white-space:nowrap;">[n-2]</td>
+<td style="text-align:center;white-space:nowrap;">[n-1]</td>
+</tr>
+</tbody></table>
+</li>
+<li data-marker="*">
+<p data-unit="67">الشيفرة الكاذبة للترتيب بالاختيار هي:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">For i from 0 to n–1
+    Find smallest number between numbers[i] and numbers[n-1]
+    Swap smallest number with numbers[i]
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="68">تلخيصًا للخطوات، يحتاج المرور الأول إلى <code class="inline-source" dir="ltr">n - 1</code> مقارنة، والثاني إلى <code class="inline-source" dir="ltr">n - 2</code>، وهكذا. يمكن تمثيل المجموع:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">(n - 1) + (n - 2) + (n - 3) + ... + 1
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="69">يساوي المجموع <code class="inline-source" dir="ltr">n(n-1)/2</code>، ومعدل نموه <code class="inline-source" dir="ltr">O(n²)</code>. في أسوأ حالة يكون الحد العلوي <code class="inline-source" dir="ltr">O(n²)</code>، وفي أفضل حالة يظل الحد السفلي <code class="inline-source" dir="ltr">Ω(n²)</code>.</li>
+</ul>
+<h2 data-unit="70" id="bubble-sort">الترتيب الفقاعي</h2>
+<ul>
+<li data-marker="*" data-unit="71">الترتيب الفقاعي، Bubble Sort، يبدّل العناصر المتجاورة مرارًا حتى «تطفو» العناصر الأكبر إلى النهاية.</li>
+<li data-marker="*">
+<p data-unit="72">شيفرته الكاذبة هي:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">Repeat n-1 times
+    For i from 0 to n–2
+        If numbers[i] and numbers[i+1] out of order
+            Swap them
+    If no swaps
+        Quit
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="73">مع كل مرور يزداد الجزء المرتب من المصفوفة، لذلك لا نحتاج إلا إلى فحص أزواج العناصر التي لم تُحسم مواضعها بعد.</li>
+<li data-marker="*">
+<p data-unit="74">يمكن تحليل كلفته كما يأتي:</p>
+<ul>
+<li data-marker="*" data-unit="75"><code class="inline-source" dir="ltr">(n - 1) × (n - 1)</code></li>
+<li data-marker="*" data-unit="76"><code class="inline-source" dir="ltr">n² - n - n + 1</code></li>
+<li data-marker="*" data-unit="77"><code class="inline-source" dir="ltr">n² - 2n + 1</code></li>
+<li data-marker="*" data-unit="78">وبصورة أبسط، <code class="inline-source" dir="ltr">O(n²)</code>.</li>
+</ul>
+</li>
+<li data-marker="*" data-unit="79">في أسوأ حالة يكون الزمن <code class="inline-source" dir="ltr">O(n²)</code>. وفي أفضل حالة يكون <code class="inline-source" dir="ltr">Ω(n)</code>، عند استخدام شرط التوقف المبكر الموضح في الشيفرة.</li>
+<li data-marker="*" data-unit="80">يمكن مشاهدة مقارنة مرئية بين هذه الخوارزميات. <a href="https://www.cs.usfca.edu/~galles/visualization/ComparisonSort.html" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="81" id="recursion">الاستدعاء الذاتي</h2>
+<ul>
+<li data-marker="*" data-unit="82">كيف نحسّن كفاءة الترتيب؟</li>
+<li data-marker="*">
+<p data-unit="83">الاستدعاء الذاتي، Recursion، هو أن تستدعي الدالة نفسها. رأينا ذلك سابقًا في:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">If no doors left
+    Return false
+If number behind middle door
+    Return true
+Else if number &lt; middle door
+    Search left half
+Else if number &gt; middle door
+    Search right half
+</code></pre></div> </div>
+<p data-unit="84">نستدعي <code class="inline-source" dir="ltr">search</code> كل مرة على نسخة أصغر من المشكلة.</p>
+</li>
+<li data-marker="*">
+<p data-unit="85">وبالمثل، ظهر الاستدعاء الذاتي في شيفرة الأسبوع صفر الكاذبة:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">1  Pick up phone book
+2  Open to middle of phone book
+3  Look at page
+4  If person is on page
+5      Call person
+6  Else if person is earlier in book
+7      Open to middle of left half of book
+8      Go back to line 3
+9  Else if person is later in book
+10     Open to middle of right half of book
+11     Go back to line 3
+12 Else
+13     Quit
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="86">يمكن تبسيط الوصف لإظهار خاصية الاستدعاء الذاتي:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">1  Pick up phone book
+2  Open to middle of phone book
+3  Look at page
+4  If person is on page
+5      Call person
+6  Else if person is earlier in book
+7      Search left half of book
+9  Else if person is later in book
+10     Search right half of book
+12 Else
+13     Quit
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="87">الحالة الأساسية، Base Case، هي الشرط الذي يوقف الاستدعاء الذاتي ويمنعه من الاستمرار بلا نهاية.</li>
+<li data-marker="*">
+<p data-unit="88">الحالة التكرارية، Recursive Case، هي الجزء الذي يستدعي الدالة نفسها بمدخلات معدلة تقرّبها من الحالة الأساسية.</p>
+</li>
+<li data-marker="*">
+<p data-unit="89">تذكّر الهرم الذي أردنا بناءه في الأسبوع الأول:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  #
+  ##
+  ###
+  ####
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="90">اكتب <code class="inline-source" dir="ltr">code iteration.c</code> في الطرفية، ثم:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Draws a pyramid using iteration
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+void draw(int n);
+
+int main(void)
+{
+    // Get height of pyramid
+    int height = get_int("Height: ");
+
+    // Draw pyramid
+    draw(height);
+}
+
+void draw(int n)
+{
+    // Draw pyramid of height n
+    for (int i = 0; i &lt; n; i++)
+    {
+        for (int j = 0; j &lt; i + 1; j++)
+        {
+            printf("#");
+        }
+        printf("\n");
+    }
+}
+</code></pre></div> </div>
+<p data-unit="91">يبني هذا البرنامج الهرم باستخدام الحلقات.</p>
+</li>
+<li data-marker="*">
+<p data-unit="92">ولتنفيذه بالاستدعاء الذاتي، اكتب <code class="inline-source" dir="ltr">code recursion.c</code> في الطرفية، ثم:</p>
+<div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">// Draws a pyramid using recursion
+
+#include &lt;cs50.h&gt;
+#include &lt;stdio.h&gt;
+
+void draw(int n);
+
+int main(void)
+{
+    // Get height of pyramid
+    int height = get_int("Height: ");
+
+    // Draw pyramid
+    draw(height);
+}
+
+void draw(int n)
+{
+    // If nothing to draw
+    if (n &lt;= 0)
+    {
+        return;
+    }
+
+    // Draw pyramid of height n - 1
+    draw(n - 1);
+
+    // Draw one more row of width n
+    for (int i = 0; i &lt; n; i++)
+    {
+        printf("#");
+    }
+    printf("\n");
+}
+</code></pre></div> </div>
+<p data-unit="93">تمنع الحالة الأساسية استمرار التنفيذ بلا نهاية. ينهي الشرط <code class="inline-source" dir="ltr">if (n &lt;= 0)</code> هذا الاستدعاء بعد حل الجزء المطلوب. كل استدعاء للدالة <code class="inline-source" dir="ltr">draw</code> يستدعيها بالقيمة <code class="inline-source" dir="ltr">n-1</code>. تصل القيمة في النهاية إلى <code class="inline-source" dir="ltr">0</code>، فتعود الدالة، ثم تُستكمل الاستدعاءات السابقة حتى ينتهي البرنامج.</p>
+</li>
+</ul>
+<h2 data-unit="94" id="merge-sort">الترتيب بالدمج</h2>
+<ul>
+<li data-marker="*" data-unit="95">يمكن استخدام الاستدعاء الذاتي لتنفيذ خوارزمية أكثر كفاءة، وهي الترتيب بالدمج، Merge Sort.</li>
+<li data-marker="*">
+<p data-unit="96">شيفرتها الكاذبة قصيرة:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">If only one number
+    Quit
+Else
+    Sort left half of numbers
+    Sort right half of numbers
+    Merge sorted halves
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="97">تأمل قائمة الأعداد الآتية:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  6341
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="98">أولًا تسأل الخوارزمية: هل تحتوي القائمة على عدد واحد فقط؟ الإجابة لا، فتتابع.</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  6341
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="99">ثانيًا تقسّم القائمة عند المنتصف، أو أقرب موضع إليه، ثم ترتّب النصف الأيسر.</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  63|41
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="100">ثالثًا تنظر إلى النصف الأيسر وتسأل: هل هو عدد واحد؟ بما أن الإجابة لا، تقسّمه مرة أخرى.</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  6|3
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="101">رابعًا تسأل مجددًا: هل هو عدد واحد؟ هذه المرة نعم، فتعود إلى المهمة السابقة عند هذه النقطة:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  63|41
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="102">خامسًا ترتّب أعداد النصف الأيسر.</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  36|41
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="103">نعود الآن إلى موضعنا في الشيفرة الكاذبة بعد ترتيب اليسار. تتكرر خطوات شبيهة بالخطوات 3 إلى 5 للنصف الأيمن، فنحصل على:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  36|14
+</code></pre></div> </div>
+</li>
+<li data-marker="*">
+<p data-unit="104">أصبح النصفان مرتبين. تدمجهما الخوارزمية بمقارنة أول عدد في اليسار بأول عدد في اليمين، ووضع الأصغر أولًا، ثم تكرار ذلك حتى تُنقل الأعداد كلها بالترتيب:</p>
+<div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight" dir="ltr"><code dir="ltr">  1346
+</code></pre></div> </div>
+</li>
+<li data-marker="*" data-unit="105">اكتمل الترتيب بالدمج وينتهي البرنامج.</li>
+<li data-marker="*" data-unit="106">الترتيب بالدمج فعّال: زمن أسوأ حالة <code class="inline-source" dir="ltr">O(n log n)</code>، وأفضل حالة <code class="inline-source" dir="ltr">Ω(n log n)</code> في النسخة المعروضة التي تستمر في زيارة عناصر القائمة. لذلك نصف معدل النمو هنا أيضًا بـ <code class="inline-source" dir="ltr">Θ(n log n)</code>.</li>
+<li data-marker="*" data-unit="107">عُرضت أيضًا مشاهدة مرئية ختامية للخوارزميات. <a href="https://www.youtube.com/watch?v=ZZuD6iUe3Pc" rel="noopener noreferrer" target="_blank">المصدر المرتبط</a></li>
+</ul>
+<h2 data-unit="108" id="summing-up">خلاصة</h2>
+<p data-unit="109">تعلّمت في هذا الدرس التفكير الخوارزمي وإنشاء أنواع بيانات خاصة بك، وبالتحديد:</p>
+<ul>
+<li data-marker="*" data-unit="110">الخوارزميات.</li>
+<li data-marker="*" data-unit="111">ترميز Big O.</li>
+<li data-marker="*" data-unit="112">البحث الثنائي والبحث الخطي.</li>
+<li data-marker="*" data-unit="113">خوارزميات الترتيب الفقاعي والاختيار والدمج.</li>
+<li data-marker="*" data-unit="114">الاستدعاء الذاتي.</li>
+</ul>
+<p data-unit="115">إلى اللقاء في الدرس القادم!</p>
+</article>
